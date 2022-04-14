@@ -13,7 +13,15 @@ namespace gestorPresupuestos.Controllers
         [HttpPost]
         public IActionResult Crear(TipoCuenta tipoCuenta)
         {
-            return View();
+            //Si el user ingresa un campo invalido, lo mantemos en la misma pantalla.
+            if (!ModelState.IsValid)
+            {
+                return View(tipoCuenta);
+            }
+            else
+            {
+                return View();
+            }
         }
     }
 }
