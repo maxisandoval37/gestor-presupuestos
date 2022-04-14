@@ -11,7 +11,7 @@ namespace gestorPresupuestos.Models
         ErrorMessage = "El campo {0} debe estar entre {2} y {1}")]
         public string nombre { get; set; }
         public int usuarioId { get; set; }
-        public int Orden { get; set; }
+        public int orden { get; set; }
 
     }
 }
