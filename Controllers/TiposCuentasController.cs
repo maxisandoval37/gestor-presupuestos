@@ -1,10 +1,17 @@
-﻿using gestorPresupuestos.Models;
+﻿using Dapper;
+using gestorPresupuestos.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 
 namespace gestorPresupuestos.Controllers
 {
     public class TiposCuentasController: Controller
     {
+        private readonly string connectionString;
+        public TiposCuentasController(IConfiguration configuration)
+        {
+            connectionString = configuration.GetConnectionString("DefaultConnection");
+        }
         public IActionResult Crear()
         {
             return View();
