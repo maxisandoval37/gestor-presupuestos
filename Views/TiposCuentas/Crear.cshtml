@@ -16,7 +16,12 @@
     <div class="mb-3">
         <label asp-for="nombre" class="form-label"></label>
         <input type="text" asp-for="nombre" class="form-controller"/>
+        <span asp-validation-for="nombre" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Enviar</button>
 </form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial"></partial>
+}
