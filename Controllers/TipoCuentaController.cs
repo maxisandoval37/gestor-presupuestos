@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace gestorPresupuestos.Controllers
 {
-    public class TiposCuentasController: Controller
+    public class TipoCuentaController: Controller
     {
-        private ITiposCuentasRepository iTiposCuentasRepository;
-        public TiposCuentasController(ITiposCuentasRepository tiposCuentasRepository)
+        private ITipoCuentaRepository iTiposCuentasRepository;
+        public TipoCuentaController(ITipoCuentaRepository tiposCuentasRepository)
         {
             this.iTiposCuentasRepository = tiposCuentasRepository;
         }
@@ -35,16 +35,30 @@ namespace gestorPresupuestos.Controllers
                 if (!existeTipoCuenta)
                 {
                     await iTiposCuentasRepository.Insertar(tipoCuenta);
+                    Console.WriteLine("Registro creado correctamente");
                     return View();
                 }
                 else
                 {
                     ModelState.AddModelError(nameof(tipoCuenta.nombre),$"El nombre para esa cuenta, ya " +
                         $"se encuentra registrado.");
-                    Console.WriteLine("Registro creado correctamente");
                     return View(tipoCuenta);
                 }
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerificarExisteTipoCuenta(string nombre)
+        {
+            var usuarioId = 6;
+            var existeTipoCuenta = await iTiposCuentasRepository.ExisteNombreYUsuarioId(nombre, usuarioId);
+
+            if (existeTipoCuenta)
+            {
+                return Json($"El nombre {nombre} ya se encuentra registrado");
+            }
+
+            return Json(true);
         }
     }
 }

@@ -4,15 +4,15 @@ using Microsoft.Data.SqlClient;
 
 namespace gestorPresupuestos.Servicios
 {
-    public interface ITiposCuentasRepository
+    public interface ITipoCuentaRepository
     {
         Task Insertar(TipoCuenta tipoCuenta);
         Task<bool> ExisteNombreYUsuarioId(string nombre, int? usuarioId);
     }
-    public class TiposCuentasRepository: ITiposCuentasRepository
+    public class TipoCuentaRepository: ITipoCuentaRepository
     {
         private readonly string connectionString;
-        public TiposCuentasRepository(IConfiguration configuration)
+        public TipoCuentaRepository(IConfiguration configuration)
         {
             connectionString = configuration.GetConnectionString("DefaultConnection");
         }

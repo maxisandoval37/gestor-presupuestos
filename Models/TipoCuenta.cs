@@ -1,4 +1,5 @@
 ﻿using gestorPresupuestos.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,6 +13,7 @@ namespace gestorPresupuestos.Models
         [StringLength(maximumLength:50,MinimumLength = 3, 
         ErrorMessage = "El campo {0} debe estar entre {2} y {1}")]
         [Display(Name = "Nombre del tipo de cuenta: ")]
+        [Remote(action: "VerificarExisteTipoCuenta", controller: "TipoCuenta")]
         public string nombre { get; set; }
         public int? usuarioId { get; set; }
         public int? orden { get; set; }
