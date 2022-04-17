@@ -8,6 +8,7 @@ namespace gestorPresupuestos.Servicios
     {
         Task Insertar(TipoCuenta tipoCuenta);
         Task<bool> ExisteNombreYUsuarioId(string nombre, int? usuarioId);
+        Task<IEnumerable<TipoCuenta>> ObtenerPorUsuarioId(int usuarioId);
     }
     public class TipoCuentaRepository: ITipoCuentaRepository
     {
@@ -34,6 +35,16 @@ namespace gestorPresupuestos.Servicios
             var existe = await connection.QueryFirstOrDefaultAsync<int>(@$"SELECT 1 FROM tipo_cuenta "+
                 "WHERE nombre = @nombre AND usuario_id = @usuarioId;", new {nombre, usuarioId});
             return existe == 1;
+        }
+
+        /// <summary>
+        /// Method <c>ObtenerPorUsuarioId</c> retorna lista con los tipos de cuentas que tiene un usuario
+        /// </summary>
+        public async Task<IEnumerable<TipoCuenta>> ObtenerPorUsuarioId(int usuarioId)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<TipoCuenta>("SELECT id,nombre,orden FROM tipo_cuenta "+
+                "WHERE usuario_id = @usuarioId", new { usuarioId });
         }
     }
 }

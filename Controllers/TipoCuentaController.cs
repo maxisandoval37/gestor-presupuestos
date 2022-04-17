@@ -35,8 +35,7 @@ namespace gestorPresupuestos.Controllers
                 if (!existeTipoCuenta)
                 {
                     await iTiposCuentasRepository.Insertar(tipoCuenta);
-                    Console.WriteLine("Registro creado correctamente");
-                    return View();
+                    return RedirectToAction("Index");
                 }
                 else
                 {
@@ -59,6 +58,13 @@ namespace gestorPresupuestos.Controllers
             }
 
             return Json(true);
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var usuarioId = 6;
+            var tiposCuentas = await iTiposCuentasRepository.ObtenerPorUsuarioId(6);
+            return View(tiposCuentas);
         }
     }
 }
