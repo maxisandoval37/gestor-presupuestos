@@ -1,24 +1,23 @@
-﻿using Dapper;
-using gestorPresupuestos.Models;
+﻿using gestorPresupuestos.Models;
+using gestorPresupuestos.Servicios;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 
 namespace gestorPresupuestos.Controllers
 {
     public class TiposCuentasController: Controller
     {
-        private readonly string connectionString;
-        public TiposCuentasController(IConfiguration configuration)
+        private ITiposCuentasRepository iTiposCuentasRepository;
+        public TiposCuentasController(ITiposCuentasRepository tiposCuentasRepository)
         {
-            connectionString = configuration.GetConnectionString("DefaultConnection");
+            this.iTiposCuentasRepository = tiposCuentasRepository;
         }
-        public IActionResult Crear()
+        public IActionResult Insertar()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult Crear(TipoCuenta tipoCuenta)
+        public async Task<IActionResult> Insertar(TipoCuenta tipoCuenta)
         {
             //Si el user ingresa un campo invalido, lo mantemos en la misma pantalla.
             if (!ModelState.IsValid)
@@ -27,7 +26,24 @@ namespace gestorPresupuestos.Controllers
             }
             else
             {
-                return View();
+                tipoCuenta.id = 1;
+                tipoCuenta.usuarioId = 6;
+
+                var existeTipoCuenta = await iTiposCuentasRepository.ExisteNombreYUsuarioId(
+                    tipoCuenta.nombre, tipoCuenta.usuarioId);
+
+                if (!existeTipoCuenta)
+                {
+                    await iTiposCuentasRepository.Insertar(tipoCuenta);
+                    return View();
+                }
+                else
+                {
+                    ModelState.AddModelError(nameof(tipoCuenta.nombre),$"El nombre para esa cuenta, ya " +
+                        $"se encuentra registrado.");
+                    Console.WriteLine("Registro creado correctamente");
+                    return View(tipoCuenta);
+                }
             }
         }
     }
