@@ -7,9 +7,11 @@ namespace gestorPresupuestos.Controllers
     public class TipoCuentaController: Controller
     {
         private ITipoCuentaRepository iTiposCuentasRepository;
-        public TipoCuentaController(ITipoCuentaRepository tiposCuentasRepository)
+        private IUsuarioRepository iUsuarioRepository;
+        public TipoCuentaController(ITipoCuentaRepository tiposCuentasRepository, IUsuarioRepository usuarioRepository)
         {
             this.iTiposCuentasRepository = tiposCuentasRepository;
+            this.iUsuarioRepository = usuarioRepository;
         }
         public IActionResult Insertar()
         {
@@ -27,7 +29,7 @@ namespace gestorPresupuestos.Controllers
             else
             {
                 tipoCuenta.id = 1;
-                tipoCuenta.usuarioId = 6;
+                tipoCuenta.usuarioId = iUsuarioRepository.ObtenerUsuarioId();
 
                 var existeTipoCuenta = await iTiposCuentasRepository.ExisteNombreYUsuarioId(
                     tipoCuenta.nombre, tipoCuenta.usuarioId);
@@ -49,7 +51,7 @@ namespace gestorPresupuestos.Controllers
         [HttpGet]
         public async Task<IActionResult> VerificarExisteTipoCuenta(string nombre)
         {
-            var usuarioId = 6;
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
             var existeTipoCuenta = await iTiposCuentasRepository.ExisteNombreYUsuarioId(nombre, usuarioId);
 
             if (existeTipoCuenta)
@@ -62,7 +64,7 @@ namespace gestorPresupuestos.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var usuarioId = 6;
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
             var tiposCuentas = await iTiposCuentasRepository.ObtenerPorUsuarioId(6);
             return View(tiposCuentas);
         }
