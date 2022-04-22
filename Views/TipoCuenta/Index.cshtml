@@ -10,9 +10,9 @@
     Ejemplos: prestamos, tarjetas de crédito, etc.
 </h5>
 
+<br />
 <!--mb: margin button-->
 <a asp-action="Insertar" class="btn btn-primary mb-3">Crear nuevo</a>
-
 <br />
 
 <table width="100%" cellspacing="10" cellpadding="10">
@@ -31,7 +31,7 @@
                 </td>
                 <td>
                     <a asp-action="Editar" asp-route-id="@tipoCuenta.id" class="btn btn-primary">Editar</a>
-                    <a class="btn btn-danger">Eliminar</a>
+                    <a asp-action="Borrar" asp-route-id="@tipoCuenta.id" class="btn btn-danger">Borrar</a>
                 </td>
             </tr>
         }

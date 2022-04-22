@@ -11,6 +11,7 @@ namespace gestorPresupuestos.Servicios
         Task<IEnumerable<TipoCuenta>> ObtenerPorUsuarioId(int usuarioId);
         Task ActualizarNombre(TipoCuenta tipoCuenta);
         Task<TipoCuenta> ObtenerPorId(int id, int usuarioId);
+        Task BorrarTipoCuenta(int id);
     }
     public class TipoCuentaRepository: ITipoCuentaRepository
     {
@@ -62,6 +63,12 @@ namespace gestorPresupuestos.Servicios
             using var connection = new SqlConnection(connectionString);
             return await connection.QueryFirstOrDefaultAsync<TipoCuenta>(@"SELECT id, nombre, orden "+
             "FROM tipo_cuenta WHERE id = @id AND usuario_id = @usuarioId", new {id, usuarioId});
+        }
+
+        public async Task BorrarTipoCuenta(int id)
+        {
+            using var connection = new SqlConnection(connectionString);
+            await connection.ExecuteAsync("DELETE tipo_cuenta WHERE id = @id",new { id });
         }
     }
 }
