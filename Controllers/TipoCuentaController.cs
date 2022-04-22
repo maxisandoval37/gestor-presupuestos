@@ -68,5 +68,38 @@ namespace gestorPresupuestos.Controllers
             var tiposCuentas = await iTiposCuentasRepository.ObtenerPorUsuarioId(6);
             return View(tiposCuentas);
         }
+
+        [HttpGet]
+        public async Task<ActionResult> Editar(int id)
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+            var tipoCuenta = await iTiposCuentasRepository.ObtenerPorId(id, usuarioId);
+
+            if (tipoCuenta is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+            else
+            {
+                return View(tipoCuenta);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Editar(TipoCuenta tipoCuenta)
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+            var existeTipoCuenta = await iTiposCuentasRepository.ObtenerPorId(tipoCuenta.id,usuarioId);
+            
+            if (existeTipoCuenta is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+            else
+            {
+                await iTiposCuentasRepository.ActualizarNombre(tipoCuenta);
+                return RedirectToAction("Index");
+            }
+        }
     }
 }

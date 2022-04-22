@@ -9,6 +9,8 @@ namespace gestorPresupuestos.Servicios
         Task Insertar(TipoCuenta tipoCuenta);
         Task<bool> ExisteNombreYUsuarioId(string nombre, int? usuarioId);
         Task<IEnumerable<TipoCuenta>> ObtenerPorUsuarioId(int usuarioId);
+        Task ActualizarNombre(TipoCuenta tipoCuenta);
+        Task<TipoCuenta> ObtenerPorId(int id, int usuarioId);
     }
     public class TipoCuentaRepository: ITipoCuentaRepository
     {
@@ -45,6 +47,21 @@ namespace gestorPresupuestos.Servicios
             using var connection = new SqlConnection(connectionString);
             return await connection.QueryAsync<TipoCuenta>("SELECT id,nombre,orden FROM tipo_cuenta "+
                 "WHERE usuario_id = @usuarioId", new { usuarioId });
+        }
+
+        public async Task ActualizarNombre(TipoCuenta tipoCuenta)
+        {
+            using var connection = new SqlConnection(connectionString);
+
+            //Execute: permite hacer un query que no va a retornar nada
+            await connection.ExecuteAsync(@"UPDATE tipo_cuenta SET nombre = @nombre WHERE id = @id",tipoCuenta);
+        }
+
+        public async Task<TipoCuenta> ObtenerPorId(int id, int usuarioId)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryFirstOrDefaultAsync<TipoCuenta>(@"SELECT id, nombre, orden "+
+            "FROM tipo_cuenta WHERE id = @id AND usuario_id = @usuarioId", new {id, usuarioId});
         }
     }
 }
