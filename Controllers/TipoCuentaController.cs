@@ -138,7 +138,24 @@ namespace gestorPresupuestos.Controllers
         [HttpPost]
         public async Task<IActionResult> Ordenar([FromBody] int[] ids)
         {
-            return Ok();
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+            var tipoCuenta = await iTiposCuentasRepository.ObtenerPorUsuarioId(usuarioId);
+            var idsTipoCuenta = tipoCuenta.Select(x => x.id);
+
+            var IdsNoPertenecenAlUser = ids.Except(idsTipoCuenta).ToList();
+
+            if (IdsNoPertenecenAlUser.Count > 0)
+            {
+                return Forbid();
+            }
+            else
+            {
+                var tiposCuentasOrdenados = ids.Select((valor,i) => 
+                new TipoCuenta() { id = valor, orden = i++}).AsEnumerable();
+
+                await iTiposCuentasRepository.OrdenarTipoCuenta(tiposCuentasOrdenados);
+                return Ok();
+            }
         }
     }
 }
