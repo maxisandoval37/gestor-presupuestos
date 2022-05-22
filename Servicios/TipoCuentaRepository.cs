@@ -25,6 +25,17 @@ namespace gestorPresupuestos.Servicios
         public async Task Insertar(TipoCuenta tipoCuenta)
         {
             using var connection = new SqlConnection(connectionString);
+
+            var id = await connection.QuerySingleAsync<int>("TIPOCUENTA_INSERTAR", 
+                new {usuario_id=tipoCuenta.usuarioId,nombre=tipoCuenta.nombre,},
+                commandType: System.Data.CommandType.StoredProcedure);
+
+            tipoCuenta.id = id;
+        }
+
+        public async Task InsertarOld(TipoCuenta tipoCuenta)
+        {
+            using var connection = new SqlConnection(connectionString);
             //QuerySingle: permite hacer un query, que estoy seguro que solo me va a traer un solo resultado
             //SCOPE_IDENTITY permite traer el id, del registro recien creado
             var id = await connection.QuerySingleAsync<int>($@"INSERT INTO tipo_cuenta" +
