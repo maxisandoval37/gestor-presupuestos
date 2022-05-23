@@ -8,6 +8,7 @@ namespace gestorPresupuestos.Controllers
     {
         private ITipoCuentaRepository iTiposCuentasRepository;
         private IUsuarioRepository iUsuarioRepository;
+        private Utils utils;
         public TipoCuentaController(ITipoCuentaRepository tiposCuentasRepository, IUsuarioRepository usuarioRepository)
         {
             this.iTiposCuentasRepository = tiposCuentasRepository;
@@ -65,7 +66,15 @@ namespace gestorPresupuestos.Controllers
         public async Task<IActionResult> Index()
         {
             var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
-            var tiposCuentas = await iTiposCuentasRepository.ObtenerPorUsuarioId(6);
+            var tiposCuentas = await iTiposCuentasRepository.ObtenerPorUsuarioId(usuarioId);
+
+            utils = new Utils();
+
+            foreach (TipoCuenta i in tiposCuentas)
+            {
+                i.nombre = utils.capitalizarStr(i.nombre);
+            }            
+
             return View(tiposCuentas);
         }
 

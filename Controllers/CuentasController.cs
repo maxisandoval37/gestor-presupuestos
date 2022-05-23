@@ -9,6 +9,7 @@ namespace gestorPresupuestos.Controllers
     {
         private readonly ITipoCuentaRepository iTipoCuentaRepository;
         private readonly IUsuarioRepository iUsuarioRepository;
+        private Utils utils;
 
         public CuentasController(ITipoCuentaRepository iTipoCuentaRepository, IUsuarioRepository iUsuarioRepository)
         {
@@ -24,7 +25,9 @@ namespace gestorPresupuestos.Controllers
             var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
             var tiposCuentas = await iTipoCuentaRepository.ObtenerPorUsuarioId(usuarioId);
             var modelo = new CuentaCreacionViewModel();
-            modelo.tiposCuentas = tiposCuentas.Select(x => new SelectListItem(x.nombre,x.id.ToString()));
+
+            utils = new Utils();
+            modelo.tiposCuentas = tiposCuentas.Select(x => new SelectListItem(utils.capitalizarStr(x.nombre),x.id.ToString()));
 
             return View(modelo);
         }
