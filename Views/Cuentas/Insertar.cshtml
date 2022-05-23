@@ -16,25 +16,25 @@
     <br />
     <div class="mb-3">
         <label asp-for="nombre" class="form-label"></label>
-        <input type="text" asp-for="nombre" class="form-controller"/>
+        <input type="text" asp-for="nombre" class="form-control"/>
         <span asp-validation-for="nombre" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="tipoCuentaId" class="form-label"></label>
-        <select asp-for="tipoCuentaId" asp-items="Model.tiposCuentas"></select>
+        <select asp-for="tipoCuentaId" asp-items="Model.tiposCuentas" class="form-select"></select>
         <span asp-validation-for="tipoCuentaId" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="balance" class="form-label"></label>
-        <input type="text" asp-for="balance" class="form-controller"/>
+        <input type="text" asp-for="balance" class="form-control"/>
         <span asp-validation-for="balance" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="descripcion" class="form-label"></label>
-        <textarea asp-for="descripcion" class="form-controller"></textarea>
+        <textarea asp-for="descripcion" class="form-control"></textarea>
         <span asp-validation-for="descripcion" class="text-danger"></span>
     </div>
 
