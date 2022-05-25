@@ -1,0 +1,17 @@
+﻿@model IEnumerable<IndiceCuentaViewModel>
+
+@{
+    ViewData["Title"] = "Listado de cuentas";
+}
+
+<h1>Cuentas</h1>
+<h5>
+    La cuenta se refiere a los distintos consumos que el usuario puede tener disponible.
+    Ejemplos: Tarjeta de crédito, cuenta de sueldo, préstamos, etc.
+</h5>
+
+<br />
+<!--mb: margin button-->
+<a asp-action="Insertar" class="btn btn-primary mb-3">Crear nuevo</a>
+<br />
+</div>

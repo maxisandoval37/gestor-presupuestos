@@ -1,0 +1,49 @@
+﻿@model CuentaCreacionViewModel
+
+@{
+    ViewData["Title"] = "Crear Cuenta";
+}
+
+<h1>Crear Cuenta</h1>
+<h5>
+    La cuenta se refiere a los distintos consumos que el usuario puede tener disponible.
+    Ejemplos: Tarjeta de crédito, cuenta de sueldo, préstamos, etc.
+</h5>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form asp-action="Insertar">
+    <br />
+    <div class="mb-3">
+        <label asp-for="nombre" class="form-label"></label>
+        <input type="text" asp-for="nombre" class="form-control"/>
+        <span asp-validation-for="nombre" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="tipoCuentaId" class="form-label"></label>
+        <select asp-for="tipoCuentaId" asp-items="Model.tiposCuentas" class="form-select"></select>
+        <span asp-validation-for="tipoCuentaId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="balance" class="form-label"></label>
+        <input type="text" asp-for="balance" class="form-control"/>
+        <span asp-validation-for="balance" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="descripcion" class="form-label"></label>
+        <textarea asp-for="descripcion" class="form-control"></textarea>
+        <span asp-validation-for="descripcion" class="text-danger"></span>
+    </div>
+
+    <br />
+
+    <button type="submit" class="btn btn-primary">Crear</button>
+    <a class="btn btn-primary" asp-action="Index">Volver</a>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial"></partial>
+}
