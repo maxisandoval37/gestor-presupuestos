@@ -56,5 +56,28 @@ namespace gestorPresupuestos.Controllers
             await iCuentaRepository.Insertar(cuenta);
             return RedirectToAction("Index");
         }
+
+        private async Task<IEnumerable<SelectListItem>> ObtenerTiposCuentas(int usuarioId)
+        {
+            var tiposCuentas = await iTipoCuentaRepository.ObtenerPorUsuarioId(usuarioId);
+            return tiposCuentas.Select(x => new SelectListItem(utils.capitalizarStr(x.nombre), x.id.ToString()));
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+            var cuentasConTC = await iCuentaRepository.BuscarPorUsuarioId(usuarioId);
+
+            //nos trae los tipos cuentas asociados a una cuenta:
+            var modelo = cuentasConTC.
+                GroupBy(x => x.tipoCuenta).
+                Select(group => new IndiceCuentaViewModel
+                {
+                    tipoCuenta = group.Key,
+                    Cuentas = group.AsEnumerable()
+                }).ToList();
+
+            return View(modelo);
+        }
     }
 }

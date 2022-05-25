@@ -14,4 +14,32 @@
 <!--mb: margin button-->
 <a asp-action="Insertar" class="btn btn-primary mb-3">Crear nuevo</a>
 <br />
+
+<div class="contenedor-totales mb-3">
+   <div>
+        <div>
+            <b>Ingresos</b>
+       </div>
+        <div class="activo">
+            @Model.Where(x=>x.balances>0).Sum(x=>x.balances)
+       </div>
+    </div>
+
+   <div>
+        <div>
+            <b>Egresos</b>
+       </div>
+        <div class="activo">
+            @Model.Where(x=>x.balances<0).Sum(x=>x.balances)
+       </div>
+    </div>
+
+   <div>
+        <div>
+            <b>Total</b>
+       </div>
+        <div class="activo">
+            @Model.Sum(x=>x.balances)
+       </div>
+    </div>
 </div>
