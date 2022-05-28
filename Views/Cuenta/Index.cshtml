@@ -77,13 +77,12 @@
 
             </h2>
 
-            <div class="accordion-collapse collapse show">
+            <div class="accordion-collapse collapse show" id="@id">
                 <div>
                     <ul class="list-group">
                         @foreach (var cuenta in i.cuentas)
                         {
                             var claseCuenta = @obtenerClaseBalance(cuenta.balance);
-                            Console.WriteLine(claseCuenta);
                             <li class="list-group-item">
                                 <span class="nombre-cuenta-span">@cuenta.nombre</span>
                                 <span class="@claseCuenta">@formatearBalance(cuenta.balance)</span>
