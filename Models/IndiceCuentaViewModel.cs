@@ -3,7 +3,7 @@
     public class IndiceCuentaViewModel
     {
         public string tipoCuenta { get; set; }
-        public IEnumerable<Cuenta> Cuentas { get; set; }
-        public decimal balances => Cuentas.Sum(x => x.balance);
+        public IEnumerable<Cuenta> cuentas { get; set; }
+        public decimal balances => cuentas.Sum(x => x.balance);
     }
 }

@@ -74,7 +74,7 @@ namespace gestorPresupuestos.Controllers
                 Select(group => new IndiceCuentaViewModel
                 {
                     tipoCuenta = group.Key,
-                    Cuentas = group.AsEnumerable()
+                    cuentas = group.AsEnumerable()
                 }).ToList();
 
             return View(modelo);
