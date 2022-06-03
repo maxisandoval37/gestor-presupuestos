@@ -73,8 +73,6 @@ namespace gestorPresupuestos.Servicios
         public async Task<TipoCuenta> ObtenerPorId(int id, int usuarioId)
         {
             using var connection = new SqlConnection(connectionString);
-            Console.WriteLine(id + " - "+usuarioId);
-            //TODO esta recibiendo cualquier id
             return await connection.QueryFirstOrDefaultAsync<TipoCuenta>(@"SELECT id, nombre, orden "+
             "FROM tipo_cuenta WHERE id = @id AND usuario_id = @usuarioId", new {id, usuarioId});
         }
