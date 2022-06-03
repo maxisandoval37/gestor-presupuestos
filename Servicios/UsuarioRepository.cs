@@ -10,6 +10,7 @@
 
         public int ObtenerUsuarioId()
         {
+            //TODO Completar hardcodeado
             return 6;
         }
     }

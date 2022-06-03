@@ -60,7 +60,9 @@ namespace gestorPresupuestos.Controllers
         private async Task<IEnumerable<SelectListItem>> ObtenerTiposCuentas(int usuarioId)
         {
             var tiposCuentas = await iTipoCuentaRepository.ObtenerPorUsuarioId(usuarioId);
-            return tiposCuentas.Select(x => new SelectListItem(utils.capitalizarStr(x.nombre), x.id.ToString()));
+            //TODO revisar capitalizarStr
+            //utils.capitalizarStr(x.nombre);
+            return tiposCuentas.Select(x => new SelectListItem(x.nombre, x.id.ToString()));
         }
 
         public async Task<IActionResult> Index()
@@ -78,6 +80,57 @@ namespace gestorPresupuestos.Controllers
                 }).ToList();
 
             return View(modelo);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Editar(int id)
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+            var cuenta = await iCuentaRepository.obtenerPorId(id, usuarioId);
+
+            if (cuenta is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+            else
+            {
+                var modelo = new CuentaCreacionViewModel()
+                {
+                    id = cuenta.id,
+                    nombre = cuenta.nombre,
+                    tipoCuentaId = cuenta.tipoCuentaId,
+                    descripcion = cuenta.descripcion,
+                    balance = cuenta.balance
+                };
+
+                modelo.tiposCuentas = await ObtenerTiposCuentas(usuarioId);
+                return View(modelo);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Editar(CuentaCreacionViewModel cuentaCreacionViewModel)
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+            var cuenta = await iCuentaRepository.obtenerPorId(cuentaCreacionViewModel.id, usuarioId);
+
+            if (cuenta is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+            else
+            {
+                var tipoCuenta = await iTipoCuentaRepository.ObtenerPorId(cuentaCreacionViewModel.tipoCuentaId, usuarioId);
+                if (tipoCuenta is null)
+                {
+                    return RedirectToAction("NoEncontrado", "Home");
+                }
+                else
+                {
+                    await iCuentaRepository.Editar(cuentaCreacionViewModel);
+                    return RedirectToAction("Index");
+                }
+            }
         }
     }
 }
