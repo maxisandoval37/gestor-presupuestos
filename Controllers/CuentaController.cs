@@ -1,4 +1,5 @@
-﻿using gestorPresupuestos.Models;
+﻿using AutoMapper;
+using gestorPresupuestos.Models;
 using gestorPresupuestos.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,16 +11,19 @@ namespace gestorPresupuestos.Controllers
         private readonly ITipoCuentaRepository iTipoCuentaRepository;
         private readonly IUsuarioRepository iUsuarioRepository;
         private readonly ICuentaRepository iCuentaRepository;
+        private readonly IMapper imapper;
         private Utils utils;
 
         public CuentaController(
             ITipoCuentaRepository iTipoCuentaRepository,
             IUsuarioRepository iUsuarioRepository,
-            ICuentaRepository iCuentaRepository)
+            ICuentaRepository iCuentaRepository,
+            IMapper imapper)
         {
             this.iTipoCuentaRepository = iTipoCuentaRepository;
             this.iUsuarioRepository = iUsuarioRepository;
             this.iCuentaRepository = iCuentaRepository;
+            this.imapper = imapper;
         }
 
         public ITipoCuentaRepository ITipoCuentaRepository { get; }
@@ -94,14 +98,7 @@ namespace gestorPresupuestos.Controllers
             }
             else
             {
-                var modelo = new CuentaCreacionViewModel()
-                {
-                    id = cuenta.id,
-                    nombre = cuenta.nombre,
-                    tipoCuentaId = cuenta.tipoCuentaId,
-                    descripcion = cuenta.descripcion,
-                    balance = cuenta.balance
-                };
+                var modelo = imapper.Map<CuentaCreacionViewModel>(cuenta);//<hasta>(desde)
 
                 modelo.tiposCuentas = await ObtenerTiposCuentas(usuarioId);
                 return View(modelo);
