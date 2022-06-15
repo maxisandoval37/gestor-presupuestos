@@ -7,9 +7,10 @@ namespace gestorPresupuestos.Servicios
     public interface ICuentaRepository
     {
         Task<IEnumerable<Cuenta>> BuscarPorUsuarioId(int usuarioId);
-        Task Editar(CuentaCreacionViewModel cuenta);
-        Task Insertar(Cuenta cuenta);
         Task<Cuenta> obtenerPorId(int id, int usuarioId);
+        Task Insertar(Cuenta cuenta);
+        Task Editar(CuentaCreacionViewModel cuenta);
+        Task Borrar(int id);
     }
     public class CuentaRepository : ICuentaRepository
     {
@@ -61,6 +62,12 @@ namespace gestorPresupuestos.Servicios
             await connection.ExecuteAsync(@"UPDATE cuentas SET nombre = @nombre, balance = @balance, "+
             "descripcion = @descripcion, tipo_cuenta_id = @tipoCuentaId " +
             "WHERE id = @id", cuenta);
+        }
+
+        public async Task Borrar(int id)
+        {
+            using var connection = new SqlConnection(connectionString);
+            await connection.ExecuteAsync(@"DELETE cuentas WHERE id = @id", new {id});
         }
     }
 }
