@@ -13,6 +13,7 @@ namespace gestorPresupuestos.Controllers
         {
             this.iTiposCuentasRepository = tiposCuentasRepository;
             this.iUsuarioRepository = usuarioRepository;
+            utils = new Utils();
         }
         public IActionResult Insertar()
         {
@@ -37,6 +38,8 @@ namespace gestorPresupuestos.Controllers
 
                 if (!existeTipoCuenta)
                 {
+                    //guardamos el nombre del tipo cuenta con la 1ra letra en mayus.
+                    tipoCuenta.nombre = utils.capitalizarStr(tipoCuenta.nombre);
                     await iTiposCuentasRepository.Insertar(tipoCuenta);
                     return RedirectToAction("Index");
                 }
@@ -66,14 +69,7 @@ namespace gestorPresupuestos.Controllers
         public async Task<IActionResult> Index()
         {
             var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
-            var tiposCuentas = await iTiposCuentasRepository.ObtenerPorUsuarioId(usuarioId);
-
-            utils = new Utils();
-
-            foreach (TipoCuenta i in tiposCuentas)
-            {
-                i.nombre = utils.capitalizarStr(i.nombre);
-            }            
+            var tiposCuentas = await iTiposCuentasRepository.ObtenerPorUsuarioId(usuarioId);      
 
             return View(tiposCuentas);
         }

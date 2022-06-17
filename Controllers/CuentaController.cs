@@ -12,7 +12,6 @@ namespace gestorPresupuestos.Controllers
         private readonly IUsuarioRepository iUsuarioRepository;
         private readonly ICuentaRepository iCuentaRepository;
         private readonly IMapper imapper;
-        private Utils utils;
 
         public CuentaController(
             ITipoCuentaRepository iTipoCuentaRepository,
@@ -33,8 +32,6 @@ namespace gestorPresupuestos.Controllers
         {
             var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
             var modelo = new CuentaCreacionViewModel();
-
-            utils = new Utils();
             modelo.tiposCuentas = await ObtenerTiposCuentas(usuarioId);
 
             return View(modelo);
@@ -64,8 +61,6 @@ namespace gestorPresupuestos.Controllers
         private async Task<IEnumerable<SelectListItem>> ObtenerTiposCuentas(int usuarioId)
         {
             var tiposCuentas = await iTipoCuentaRepository.ObtenerPorUsuarioId(usuarioId);
-            //TODO revisar capitalizarStr
-            //utils.capitalizarStr(x.nombre);
             return tiposCuentas.Select(x => new SelectListItem(x.nombre, x.id.ToString()));
         }
 
