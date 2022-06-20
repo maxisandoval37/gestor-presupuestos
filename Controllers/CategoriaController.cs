@@ -34,5 +34,13 @@ namespace gestorPresupuestos.Controllers
             await iCategoriaRepository.Insertar(categoria);
             return RedirectToAction("Index");
         }
+
+        public async Task<IActionResult> Index()
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+            var categorias = await iCategoriaRepository.BuscarPorUsuarioId(usuarioId);
+
+            return View(categorias);
+        }
     }
 }

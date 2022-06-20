@@ -7,6 +7,7 @@ namespace gestorPresupuestos.Servicios
     public interface ICategoriaRepository
     {
         Task Insertar(Categoria categoria);
+        Task<IEnumerable<Categoria>> BuscarPorUsuarioId(int usuarioId);
     }
     public class CategoriaRepository: ICategoriaRepository
     {
@@ -24,6 +25,14 @@ namespace gestorPresupuestos.Servicios
             "(nombre, tipo_operacion_id, usuario_id)" +
             "VALUES(@nombre, @tipoOperacionId, @usuarioId);SELECT SCOPE_IDENTITY();", categoria);
             categoria.id = id;
+        }
+
+        public async Task<IEnumerable<Categoria>> BuscarPorUsuarioId(int usuarioId)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<Categoria>(
+                $@"SELECT * FROM categorias " +
+                "WHERE usuario_id = @usuarioId ", new { usuarioId });
         }
     }
 }
