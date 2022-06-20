@@ -10,6 +10,7 @@ namespace gestorPresupuestos.Servicios
         Task<IEnumerable<Categoria>> BuscarPorUsuarioId(int usuarioId);
         Task<Categoria> ObtenerPorId(int id, int usuarioId);
         Task Editar(Categoria categoria);
+        Task Borrar(int id);
     }
     public class CategoriaRepository: ICategoriaRepository
     {
@@ -54,6 +55,12 @@ namespace gestorPresupuestos.Servicios
             await connection.ExecuteAsync(@"UPDATE categorias SET "+
             "nombre = @nombre, tipo_operacion_id = @tipoOperacionId " +
             "WHERE id = @id", categoria);
+        }
+
+        public async Task Borrar(int id)
+        {
+            using var connection = new SqlConnection(connectionString);
+            await connection.ExecuteAsync(@"DELETE categorias WHERE id = @id", new { id });
         }
     }
 }

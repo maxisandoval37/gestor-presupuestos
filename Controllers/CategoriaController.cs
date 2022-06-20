@@ -82,5 +82,38 @@ namespace gestorPresupuestos.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Borrar(int id)
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+            var categoria = await iCategoriaRepository.ObtenerPorId(id, usuarioId);
+
+            if (categoria is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+            else
+            {
+                return View(categoria);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BorrarCategoria(int id)
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+            var categoria = await iCategoriaRepository.ObtenerPorId(id, usuarioId);
+
+            if (categoria is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+            else
+            {
+                await iCategoriaRepository.Borrar(id);
+                return RedirectToAction("Index");
+            }
+        }
     }
 }
