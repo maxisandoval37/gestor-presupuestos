@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace gestorPresupuestos.Controllers
 {
-    public class CategoriaController: Controller
+    public class CategoriaController : Controller
     {
         private readonly ICategoriaRepository iCategoriaRepository;
         private readonly IUsuarioRepository iUsuarioRepository;
@@ -19,7 +19,7 @@ namespace gestorPresupuestos.Controllers
         {
             return View();
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> Insertar(Categoria categoria)
         {
@@ -41,6 +41,46 @@ namespace gestorPresupuestos.Controllers
             var categorias = await iCategoriaRepository.BuscarPorUsuarioId(usuarioId);
 
             return View(categorias);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Editar(int id)
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+            var categoria = await iCategoriaRepository.ObtenerPorId(id, usuarioId);
+
+            if (categoria is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+            else
+            {
+                return View(categoria);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Editar(Categoria categoriaEditar)
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+
+            if (!ModelState.IsValid)
+            {
+                return View(categoriaEditar);
+            }
+
+            var categoria = await iCategoriaRepository.ObtenerPorId(categoriaEditar.id, usuarioId);
+
+            if (categoria is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+            else
+            {
+                categoriaEditar.usuarioId = usuarioId;
+                await iCategoriaRepository.Editar(categoriaEditar);
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }

@@ -8,6 +8,8 @@ namespace gestorPresupuestos.Servicios
     {
         Task Insertar(Categoria categoria);
         Task<IEnumerable<Categoria>> BuscarPorUsuarioId(int usuarioId);
+        Task<Categoria> ObtenerPorId(int id, int usuarioId);
+        Task Editar(Categoria categoria);
     }
     public class CategoriaRepository: ICategoriaRepository
     {
@@ -35,6 +37,23 @@ namespace gestorPresupuestos.Servicios
                 $@"SELECT id, nombre, tipo_operacion_id AS tipoOperacionId, usuario_id AS usuarioId " +
                 "FROM categorias " +
                 "WHERE usuario_id = @usuarioId ", new { usuarioId });
+        }
+
+        public async Task<Categoria> ObtenerPorId(int id, int usuarioId)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryFirstOrDefaultAsync<Categoria>(
+                $@"SELECT id, nombre, tipo_operacion_id AS tipoOperacionId, usuario_id AS usuarioId " +
+                "FROM categorias " +
+                "WHERE id = @id AND usuario_id = @usuarioId ", new { id, usuarioId });
+        }
+
+        public async Task Editar(Categoria categoria)
+        {
+            using var connection = new SqlConnection(connectionString);
+            await connection.ExecuteAsync(@"UPDATE categoria SET "+
+            "nombre = @nombre, tipo_operacion_id = @tipoOperacionId, " +
+            "WHERE id = @id", categoria);
         }
     }
 }
