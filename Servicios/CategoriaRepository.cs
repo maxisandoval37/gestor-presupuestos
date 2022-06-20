@@ -30,8 +30,10 @@ namespace gestorPresupuestos.Servicios
         public async Task<IEnumerable<Categoria>> BuscarPorUsuarioId(int usuarioId)
         {
             using var connection = new SqlConnection(connectionString);
+            //Aplicamos el 'AS' para hacer match entre el nombre del atributo de la tabla y el modelo en c#
             return await connection.QueryAsync<Categoria>(
-                $@"SELECT * FROM categorias " +
+                $@"SELECT id, nombre, tipo_operacion_id AS tipoOperacionId, usuario_id AS usuarioId " +
+                "FROM categorias " +
                 "WHERE usuario_id = @usuarioId ", new { usuarioId });
         }
     }
