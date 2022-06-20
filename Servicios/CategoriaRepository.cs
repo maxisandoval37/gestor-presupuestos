@@ -51,8 +51,8 @@ namespace gestorPresupuestos.Servicios
         public async Task Editar(Categoria categoria)
         {
             using var connection = new SqlConnection(connectionString);
-            await connection.ExecuteAsync(@"UPDATE categoria SET "+
-            "nombre = @nombre, tipo_operacion_id = @tipoOperacionId, " +
+            await connection.ExecuteAsync(@"UPDATE categorias SET "+
+            "nombre = @nombre, tipo_operacion_id = @tipoOperacionId " +
             "WHERE id = @id", categoria);
         }
     }

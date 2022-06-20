@@ -79,7 +79,7 @@ namespace gestorPresupuestos.Controllers
             {
                 categoriaEditar.usuarioId = usuarioId;
                 await iCategoriaRepository.Editar(categoriaEditar);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index");
             }
         }
     }
