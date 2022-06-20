@@ -12,6 +12,7 @@ namespace gestorPresupuestos.Controllers
         private readonly IUsuarioRepository iUsuarioRepository;
         private readonly ICuentaRepository iCuentaRepository;
         private readonly IMapper imapper;
+        private Utils utils;
 
         public CuentaController(
             ITipoCuentaRepository iTipoCuentaRepository,
@@ -23,6 +24,7 @@ namespace gestorPresupuestos.Controllers
             this.iUsuarioRepository = iUsuarioRepository;
             this.iCuentaRepository = iCuentaRepository;
             this.imapper = imapper;
+            utils = new Utils();
         }
 
         public ITipoCuentaRepository ITipoCuentaRepository { get; }
@@ -54,6 +56,7 @@ namespace gestorPresupuestos.Controllers
                 return View(cuenta);
             }
 
+            cuenta.nombre = utils.capitalizarStr(cuenta.nombre);
             await iCuentaRepository.Insertar(cuenta);
             return RedirectToAction("Index");
         }

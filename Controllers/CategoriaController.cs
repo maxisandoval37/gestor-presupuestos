@@ -8,10 +8,12 @@ namespace gestorPresupuestos.Controllers
     {
         private readonly ICategoriaRepository iCategoriaRepository;
         private readonly IUsuarioRepository iUsuarioRepository;
+        private Utils utils;
         public CategoriaController(ICategoriaRepository iCategoriaRepository, IUsuarioRepository iUsuarioRepository)
         {
             this.iCategoriaRepository = iCategoriaRepository;
             this.iUsuarioRepository = iUsuarioRepository;
+            utils = new Utils();
         }
 
         [HttpGet]
@@ -31,6 +33,7 @@ namespace gestorPresupuestos.Controllers
             }
 
             categoria.usuarioId = usuarioId;
+            categoria.nombre = utils.capitalizarStr(categoria.nombre);
             await iCategoriaRepository.Insertar(categoria);
             return RedirectToAction("Index");
         }
