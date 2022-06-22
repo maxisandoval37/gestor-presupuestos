@@ -13,7 +13,6 @@ CREATE TABLE [dbo].[transacciones](
 	[usuario_id] [int] NOT NULL,
 	[fecha_transaccion] [datetime] NOT NULL,
 	[monto] [decimal](18, 2) NOT NULL,
-	[tipo_operacion_id] [int] NOT NULL,
 	[nota] [nchar](1000) NULL,
 	[cuenta_id] [int] NOT NULL,
 	[categoria_id] [int] NOT NULL,
@@ -36,13 +35,6 @@ REFERENCES [dbo].[cuentas] ([id])
 GO
 
 ALTER TABLE [dbo].[transacciones] CHECK CONSTRAINT [FK_transacciones_cuentas]
-GO
-
-ALTER TABLE [dbo].[transacciones]  WITH CHECK ADD  CONSTRAINT [FK_transacciones_tipos_operaciones] FOREIGN KEY([tipo_operacion_id])
-REFERENCES [dbo].[tipos_operaciones] ([id])
-GO
-
-ALTER TABLE [dbo].[transacciones] CHECK CONSTRAINT [FK_transacciones_tipos_operaciones]
 GO
 
 ALTER TABLE [dbo].[transacciones]  WITH CHECK ADD  CONSTRAINT [FK_transacciones_usuarios] FOREIGN KEY([usuario_id])
