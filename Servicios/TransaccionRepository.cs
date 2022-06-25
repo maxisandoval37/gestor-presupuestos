@@ -21,7 +21,7 @@ namespace gestorPresupuestos.Servicios
         {
             using var connection = new SqlConnection(connectionString);
 
-            var id = await connection.QuerySingleAsync<int>("TIPOCUENTA_INSERTAR",
+            var id = await connection.QuerySingleAsync<int>("TRANSACCION_INSERTAR",
                 new
                 {
                     usuario_id = transaccion.usuarioId,

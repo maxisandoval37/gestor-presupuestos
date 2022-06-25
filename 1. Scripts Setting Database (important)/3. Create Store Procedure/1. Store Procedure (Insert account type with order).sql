@@ -28,6 +28,8 @@ BEGIN
 	SELECT @orden = COALESCE(MAX(orden),0)+1 FROM tipo_cuenta WHERE usuario_id = @usuario_id
 
 	INSERT INTO tipo_cuenta(nombre,usuario_id,orden) VALUES (@nombre,@usuario_id,@orden);
+	
+	--POR ULTIMO DEVOLVEMOS EL ID DEL TIPO_CUENTA CREADO
 	SELECT SCOPE_IDENTITY();
 END
 GO
