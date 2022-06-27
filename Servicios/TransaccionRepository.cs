@@ -7,7 +7,7 @@ namespace gestorPresupuestos.Servicios
     public interface ITransaccionRepository
     {
         Task Insertar(Transaccion transaccion);
-
+        Task<IEnumerable<Transaccion>> BuscarPorUsuarioId(int usuarioId);
     }
     public class TransaccionRepository : ITransaccionRepository
     {
@@ -34,6 +34,16 @@ namespace gestorPresupuestos.Servicios
                 commandType: System.Data.CommandType.StoredProcedure);
 
             transaccion.id = id;
+        }
+
+        public async Task<IEnumerable<Transaccion>> BuscarPorUsuarioId(int usuarioId)
+        {
+            using var connection = new SqlConnection(connectionString);
+            //Aplicamos el 'AS' para hacer match entre el nombre del atributo de la tabla y el modelo en c#
+            return await connection.QueryAsync<Transaccion>(
+                $@"SELECT id, fecha_transaccion AS fechaTransaccion, monto, nota, cuenta_id AS categoriaId, categoria_id AS categoriaId " +
+                "FROM transacciones " +
+                "WHERE usuario_id = @usuarioId ", new { usuarioId });
         }
     }
 }

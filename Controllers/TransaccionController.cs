@@ -72,6 +72,14 @@ namespace gestorPresupuestos.Controllers
             }
         }
 
+        public async Task<IActionResult> Index()
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+            var transacciones = await iTransaccionRepository.BuscarPorUsuarioId(usuarioId);
+
+            return View(transacciones);
+        }
+
         private async Task<IEnumerable<SelectListItem>> ObtenerCuentas(int usuarioId)
         {
             var cuentas = await iCuentaRepository.BuscarPorUsuarioId(usuarioId);
