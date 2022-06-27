@@ -11,6 +11,7 @@ namespace gestorPresupuestos.Servicios
         Task<Categoria> ObtenerPorId(int id, int usuarioId);
         Task Editar(Categoria categoria);
         Task Borrar(int id);
+        Task<IEnumerable<Categoria>> ObtenerPorIdYTipoOperacion(int id, TipoOperacion tipoOperacion);
     }
     public class CategoriaRepository: ICategoriaRepository
     {
@@ -47,6 +48,15 @@ namespace gestorPresupuestos.Servicios
                 $@"SELECT id, nombre, tipo_operacion_id AS tipoOperacionId, usuario_id AS usuarioId " +
                 "FROM categorias " +
                 "WHERE id = @id AND usuario_id = @usuarioId ", new { id, usuarioId });
+        }
+
+        public async Task<IEnumerable<Categoria>> ObtenerPorIdYTipoOperacion(int usuarioId, TipoOperacion tipoOperacion)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<Categoria>(
+                $@"SELECT id, nombre, tipo_operacion_id AS tipoOperacionId, usuario_id AS usuarioId " +
+                "FROM categorias " +
+                "WHERE usuario_id = @usuarioId AND tipo_operacion_id = @tipoOperacion ", new { usuarioId, tipoOperacion });
         }
 
         public async Task Editar(Categoria categoria)

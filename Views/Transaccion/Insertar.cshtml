@@ -32,6 +32,7 @@
         <span asp-validation-for="tipoOperacionId" class="text-danger"></span>
     </div>
 
+    <!--TODO Agregar asp-for-->
     <div class="mb-3">
         <label asp-for="categoriaId" class="form-label"></label>
         <select asp-for="categoriaId"  class="form-select"></select>
@@ -58,4 +59,31 @@
 
 @section Scripts{
     <partial name="_ValidationScriptsPartial"></partial>
+
+    <script>
+        const urlCategorias = '@Url.Action("ObtenerCategorias")';
+        let valorSeleccionado = 1;//valor por defecto 1: Ingreso
+        obtenerCategoriasCascada(valorSeleccionado);
+
+        $(function(){
+            $("#tipoOperacionId").change(async function(){
+                valorSeleccionado = $(this).val();
+                obtenerCategoriasCascada(valorSeleccionado);
+            })
+        })
+
+        //obtiene las categorias de la lista desplegable dependiendo del tipo op.
+        async function obtenerCategoriasCascada(tipoOperacion) {
+            const response = await fetch(urlCategorias,{
+                method: 'POST',
+                body: tipoOperacion,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+                });
+
+                const json = await response.json();
+                console.log(json);
+        }
+    </script>
 }

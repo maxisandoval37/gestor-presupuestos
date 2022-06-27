@@ -34,7 +34,6 @@ namespace gestorPresupuestos.Servicios
                 commandType: System.Data.CommandType.StoredProcedure);
 
             transaccion.id = id;
-            //TODO Crear SP en la DB
         }
     }
 }
