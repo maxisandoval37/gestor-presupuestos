@@ -10,11 +10,14 @@ namespace gestorPresupuestos.Controllers
         private readonly IUsuarioRepository iUsuarioRepository;
         private readonly ICuentaRepository iCuentaRepository;
         private readonly ICategoriaRepository iCategoriaRepository;
+        private readonly ITransaccionRepository iTransaccionRepository;
         public TransaccionController(
+            ITransaccionRepository iTransaccionRepository,
             IUsuarioRepository iUsuarioRepository, 
             ICuentaRepository iCuentaRepository,
             ICategoriaRepository iCategoriaRepository)
         {
+            this.iTransaccionRepository = iTransaccionRepository;
             this.iUsuarioRepository = iUsuarioRepository;
             this.iCuentaRepository = iCuentaRepository;
             this.iCategoriaRepository = iCategoriaRepository;
@@ -28,6 +31,45 @@ namespace gestorPresupuestos.Controllers
             modelo.Categorias = await ObtenerCategorias(usuarioId, modelo.tipoOperacionId);
 
             return View(modelo);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Insertar(TransaccionCreacionViewModel transaccionCM)
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+
+            if (!ModelState.IsValid)
+            {
+                transaccionCM.Cuentas = await ObtenerCuentas(usuarioId);
+                transaccionCM.Categorias = await ObtenerCategorias(usuarioId, transaccionCM.tipoOperacionId);
+                return View(transaccionCM);
+            }
+            else
+            {
+                var cuenta = await iCuentaRepository.obtenerPorId(transaccionCM.categoriaId, usuarioId);
+
+                if (cuenta is null)
+                {
+                    return RedirectToAction("NoEncontrado", "Home");
+                }
+
+                var categoria = await iCategoriaRepository.ObtenerPorId(transaccionCM.cuentaId, usuarioId);
+
+                if (categoria is null)
+                {
+                    return RedirectToAction("NoEncontrado", "Home");
+                }
+
+                transaccionCM.usuarioId = usuarioId;
+
+                if (transaccionCM.tipoOperacionId == TipoOperacion.Egreso)
+                {
+                    transaccionCM.monto = Math.Abs(transaccionCM.monto);
+                }
+
+                await iTransaccionRepository.Insertar(transaccionCM);
+                return RedirectToAction("Index");
+            }
         }
 
         private async Task<IEnumerable<SelectListItem>> ObtenerCuentas(int usuarioId)
