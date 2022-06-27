@@ -19,7 +19,6 @@ CREATE PROCEDURE [dbo].[TRANSACCION_INSERTAR]
 	@usuario_id int,
 	@fecha_transaccion date,
 	@monto decimal (18,2),
-	@nombre int,
 	@nota nvarchar (1000) = NULL,
 	@cuenta_id int,
 	@categoria_id int
