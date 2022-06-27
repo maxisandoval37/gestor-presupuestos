@@ -63,10 +63,16 @@
 
         const urlCategorias = '@Url.Action("ObtenerCategorias")';
         let valorSeleccionado = 1;//valor por defecto 1: Ingreso
+        llenarListaCategorias(urlCategorias,valorSeleccionado);
 
         $("#tipoOperacionId").change(async function () {
             valorSeleccionado = $(this).val();
 
+            llenarListaCategorias(urlCategorias,valorSeleccionado);
+        })
+
+        async function llenarListaCategorias(urlCategorias, valorSeleccionado) {
+            //hacer peticion para obtener las categorias:
             const respuesta = await fetch(urlCategorias, {
                 method: 'POST',
                 body: valorSeleccionado,
@@ -80,7 +86,7 @@
             //llenar lista desplegable de categorias:
             const opciones = json.map(categoria => `<option value=${categoria.value}>${categoria.text}</option>`);
             $("#categoriaId").html(opciones);
-        })
+        }
 
     </script>
 }
