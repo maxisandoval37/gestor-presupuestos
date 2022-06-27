@@ -25,6 +25,7 @@ namespace gestorPresupuestos.Controllers
             var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
             var modelo = new TransaccionCreacionViewModel();
             modelo.Cuentas = await ObtenerCuentas(usuarioId);
+            modelo.Categorias = await ObtenerCategorias(usuarioId, modelo.tipoOperacionId);
 
             return View(modelo);
         }

@@ -7,8 +7,8 @@ namespace gestorPresupuestos.Models
     {
         public IEnumerable<SelectListItem> Cuentas { get; set; }
         public IEnumerable<SelectListItem> Categorias { get; set; }
-        
+
         [Display(Name = "Tipo de Operación")]
-        public TipoOperacion tipoOperacionId { get; set; }
+        public TipoOperacion tipoOperacionId { get; set; } = TipoOperacion.Ingreso;
     }
 }
