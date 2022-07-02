@@ -31,7 +31,7 @@ BEGIN
 	INSERT INTO transacciones(usuario_id,fecha_transaccion,monto,nota,cuenta_id,categoria_id) 
 	VALUES (@usuario_id, @fecha_transaccion, ABS(@monto), @nota, @cuenta_id, @categoria_id);
 	
-	UPDATE cuentas set balance += @monto where id = @cuenta_id
+	UPDATE cuentas SET balance += @monto WHERE id = @cuenta_id
 
 	--POR ULTIMO DEVOLVEMOS EL ID DE LA TRANSACCION CREADA
 	SELECT SCOPE_IDENTITY();
