@@ -8,6 +8,8 @@ namespace gestorPresupuestos.Servicios
     {
         Task Insertar(Transaccion transaccion);
         Task<IEnumerable<Transaccion>> BuscarPorUsuarioId(int usuarioId);
+        Task<Transaccion> BuscarPorId(int id, int usuarioId);
+        Task Actualizar(Transaccion transaccion, decimal montoAnterior, int cuentaAnterior);
     }
     public class TransaccionRepository : ITransaccionRepository
     {
@@ -44,6 +46,32 @@ namespace gestorPresupuestos.Servicios
                 $@"SELECT id, fecha_transaccion AS fechaTransaccion, monto, nota, cuenta_id AS categoriaId, categoria_id AS categoriaId " +
                 "FROM transacciones " +
                 "WHERE usuario_id = @usuarioId ", new { usuarioId });
+        }
+
+        public async Task<Transaccion> BuscarPorId(int id, int usuarioId)
+        {
+            using var connection = new SqlConnection(connectionString);
+            //Aplicamos el 'AS' para hacer match entre el nombre del atributo de la tabla y el modelo en c#
+            return await connection.QueryFirstOrDefaultAsync<Transaccion>(
+                $@"SELECT id, fecha_transaccion AS fechaTransaccion, monto, nota, cuenta_id AS categoriaId, categoria_id AS categoriaId ," +
+                "CATE.tipo_operacion_id "+
+                "FROM transacciones INNER JOIN categorias cate ON cate.id = transacciones.categoria_id" +
+                "WHERE id = @id AND usuario_id = @usuarioId ", new {id, usuarioId });
+        }
+
+        public async Task Actualizar(Transaccion transaccion, decimal montoAnterior, int cuentaAnteriorId)
+        {
+            using var connection = new SqlConnection(connectionString);
+            await connection.ExecuteAsync("TRANSACCION_ACTUALIZAR", new {
+                transaccion.id,
+                transaccion.fechaTransaccion,
+                transaccion.monto,
+                transaccion.categoriaId,
+                transaccion.cuentaId,
+                transaccion.nota,
+                montoAnterior,
+                cuentaAnteriorId//TODO Si tira error, es porque tiene que tener el mismo nombre que en la DB
+            },commandType: System.Data.CommandType.StoredProcedure);
         }
     }
 }
