@@ -9,7 +9,7 @@ namespace ManejoPresupuesto.Servicios
         {
             CreateMap<Cuenta, CuentaCreacionViewModel>();//Desde, Hasta
             CreateMap<TransaccionCreacionViewModel, Transaccion>().ReverseMap();
-            //ReverseMap: Permite que el mapeo sea idea y vuelta:
+            //ReverseMap: Permite que el mapeo sea ida y vuelta:
             //                      A -> B // B -> A
         }
     }
