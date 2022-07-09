@@ -1,0 +1,95 @@
+﻿@model TransaccionActualizacionViewModel
+
+@{
+    ViewData["Title"] = "Editar Transaccion";
+}
+
+<h1>Editar Transaccion</h1>
+<h5>
+    Las transacciones permiten registrar los movientos de ingresos y egresos. 
+    Tiene asociada una cuenta y categoría del tipo de registro.
+</h5>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input type="hidden" asp-for="id" />
+<input type="hidden" asp-for="cuentaAnteriorId" />
+<input type="hidden" asp-for="montoAnterior" />
+
+<form asp-action="Editar">
+    <br />
+    <div class="mb-3">
+        <label asp-for="fechaTransaccion" class="form-label"></label>
+        <input type="datetime-local" asp-for="fechaTransaccion" class="form-control"/>
+        <span asp-validation-for="fechaTransaccion" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="cuentaId" class="form-label"></label>
+        <select asp-for="cuentaId" asp-items="Model.Cuentas" class="form-select"></select>
+        <span asp-validation-for="cuentaId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="tipoOperacionId" class="form-label"></label>
+        <select asp-for="tipoOperacionId" asp-items="Html.GetEnumSelectList<TipoOperacion>()" class="form-select"></select>
+        <span asp-validation-for="tipoOperacionId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="categoriaId" class="form-label"></label>
+        <select asp-for="categoriaId" class="form-select"></select>
+        <span asp-validation-for="categoriaId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="monto" class="form-label"></label>
+        <input type="number" asp-for="monto" class="form-control"/>
+        <span asp-validation-for="monto" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="nota" class="form-label"></label>
+        <textarea type="text" asp-for="nota" class="form-control"></textarea>
+        <span asp-validation-for="nota" class="text-danger"></span>
+    </div>
+
+    <br />
+
+    <button type="submit" class="btn btn-primary">Editar</button>
+    <a class="btn btn-primary" asp-action="Index">Volver</a>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial"></partial>
+
+    <script>
+
+        const urlCategorias = '@Url.Action("ObtenerCategorias")';
+        let valorSeleccionado = 1;//valor por defecto 1: Ingreso
+        llenarListaCategorias(urlCategorias,valorSeleccionado);
+
+        $("#tipoOperacionId").change(async function () {
+            valorSeleccionado = $(this).val();
+
+            llenarListaCategorias(urlCategorias,valorSeleccionado);
+        })
+
+        async function llenarListaCategorias(urlCategorias, valorSeleccionado) {
+            //hacer peticion para obtener las categorias:
+            const respuesta = await fetch(urlCategorias, {
+                method: 'POST',
+                body: valorSeleccionado,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const json = await respuesta.json();
+
+            //llenar lista desplegable de categorias:
+            const opciones = json.map(categoria => `<option value=${categoria.value}>${categoria.text}</option>`);
+            $("#categoriaId").html(opciones);
+        }
+
+    </script>
+}
