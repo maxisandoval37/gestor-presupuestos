@@ -53,10 +53,10 @@ namespace gestorPresupuestos.Servicios
             using var connection = new SqlConnection(connectionString);
             //Aplicamos el 'AS' para hacer match entre el nombre del atributo de la tabla y el modelo en c#
             return await connection.QueryFirstOrDefaultAsync<Transaccion>(
-                $@"SELECT id, fecha_transaccion AS fechaTransaccion, monto, nota, cuenta_id AS categoriaId, categoria_id AS categoriaId ," +
+                $@"SELECT transacciones.id, fecha_transaccion AS fechaTransaccion, monto, nota, cuenta_id AS cuentaId, categoria_id AS categoriaId ," +
                 "CATE.tipo_operacion_id "+
-                "FROM transacciones INNER JOIN categorias cate ON cate.id = transacciones.categoria_id" +
-                "WHERE id = @id AND usuario_id = @usuarioId ", new {id, usuarioId });
+                "FROM transacciones INNER JOIN categorias cate ON cate.id = transacciones.categoria_id " +
+                "WHERE transacciones.id = @id AND transacciones.usuario_id = @usuarioId ", new {id, usuarioId });
         }
 
         public async Task Actualizar(Transaccion transaccion, decimal montoAnterior, int cuentaAnteriorId)
