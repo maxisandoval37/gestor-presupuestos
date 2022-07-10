@@ -59,18 +59,24 @@ namespace gestorPresupuestos.Servicios
                 "WHERE transacciones.id = @id AND transacciones.usuario_id = @usuarioId ", new {id, usuarioId });
         }
 
-        public async Task Actualizar(Transaccion transaccion, decimal montoAnterior, int cuentaAnteriorId)
+        public async Task Actualizar(Transaccion transaccion, decimal monto_anterior, int cuenta_id_anterior)
         {
             using var connection = new SqlConnection(connectionString);
+
+            //hacemos esto para que coincida con los nombres de la db:
+            var fecha_transaccion = transaccion.fechaTransaccion;
+            var categoria_id = transaccion.categoriaId;
+            var cuenta_id = transaccion.cuentaId;
+
             await connection.ExecuteAsync("TRANSACCION_ACTUALIZAR", new {
                 transaccion.id,
-                transaccion.fechaTransaccion,
+                fecha_transaccion,
                 transaccion.monto,
-                transaccion.categoriaId,
-                transaccion.cuentaId,
+                monto_anterior,
+                cuenta_id,
+                cuenta_id_anterior,
+                categoria_id,
                 transaccion.nota,
-                montoAnterior,
-                cuentaAnteriorId//TODO Si tira error, es porque tiene que tener el mismo nombre que en la DB
             },commandType: System.Data.CommandType.StoredProcedure);
         }
     }
