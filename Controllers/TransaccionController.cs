@@ -119,24 +119,15 @@ namespace gestorPresupuestos.Controllers
             }
             else
             {
-                //TODO Se rompe el automapper
-                //TODO El monto anterior esta llegando vacio
-                //var modelo = iMapper.Map<TransaccionActualizacionViewModel>(transaccion);
-
-                var modelo = new TransaccionActualizacionViewModel()
-                {
-                    id = transaccion.id,
-                    usuarioId = transaccion.usuarioId,
-                    fechaTransaccion = transaccion.fechaTransaccion,
-                    categoriaId = transaccion.categoriaId,
-                    cuentaId = transaccion.cuentaId,
-                    tipoOperacionId = transaccion.tipoOperacionId
-                    
-                };
+                var modelo = iMapper.Map<TransaccionActualizacionViewModel>(transaccion);
 
                 if (modelo.tipoOperacionId == TipoOperacion.Egreso)
                 {
                     modelo.montoAnterior = modelo.monto * -1;
+                }
+                else
+                {
+                    modelo.montoAnterior = modelo.monto;
                 }
 
                 modelo.cuentaAnteriorId = transaccion.cuentaId;
