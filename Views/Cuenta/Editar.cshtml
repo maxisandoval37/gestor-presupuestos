@@ -11,9 +11,10 @@
 </h5>
 
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-<input type="hidden" asp-for="id"/>
 
 <form asp-action="Editar">
+    <input type="hidden" asp-for="id"/>
+
     <br />
     <div class="mb-3">
         <label asp-for="nombre" class="form-label"></label>
