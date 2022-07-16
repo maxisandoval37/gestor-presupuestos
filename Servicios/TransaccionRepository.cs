@@ -10,6 +10,7 @@ namespace gestorPresupuestos.Servicios
         Task<IEnumerable<Transaccion>> BuscarPorUsuarioId(int usuarioId);
         Task<Transaccion> BuscarPorId(int id, int usuarioId);
         Task Actualizar(Transaccion transaccion, decimal montoAnterior, int cuentaAnterior);
+        Task Borrar(int id);
     }
     public class TransaccionRepository : ITransaccionRepository
     {
@@ -78,6 +79,14 @@ namespace gestorPresupuestos.Servicios
                 categoria_id,
                 transaccion.nota,
             },commandType: System.Data.CommandType.StoredProcedure);
+        }
+
+        public async Task Borrar(int id)
+        {
+            using var connection = new SqlConnection(connectionString);
+
+            await connection.ExecuteAsync("TRANSACCION_BORRAR", 
+                new { id }, commandType: System.Data.CommandType.StoredProcedure);
         }
     }
 }

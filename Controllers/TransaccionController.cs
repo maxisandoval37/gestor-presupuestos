@@ -180,5 +180,22 @@ namespace gestorPresupuestos.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Borrar(int id)
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+            var transaccion = await iTransaccionRepository.BuscarPorId(id, usuarioId);
+
+            if (transaccion is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+            else
+            {
+                await iTransaccionRepository.Borrar(id);
+                return RedirectToAction("Index");
+            }
+        }
     }
 }
