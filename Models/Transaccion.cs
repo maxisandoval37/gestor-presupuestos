@@ -20,5 +20,8 @@ namespace gestorPresupuestos.Models
 
         [Display(Name = "Tipo de Operación")]
         public TipoOperacion tipoOperacionId { get; set; } = TipoOperacion.Ingreso;
+
+        public string cuenta { get; set; }
+        public string categoria { get; set; }
     }
 }

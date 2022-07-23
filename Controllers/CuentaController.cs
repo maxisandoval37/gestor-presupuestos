@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using gestorPresupuestos.Models;
+using gestorPresupuestos.Models.reportes;
 using gestorPresupuestos.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,6 +12,7 @@ namespace gestorPresupuestos.Controllers
         private readonly ITipoCuentaRepository iTipoCuentaRepository;
         private readonly IUsuarioRepository iUsuarioRepository;
         private readonly ICuentaRepository iCuentaRepository;
+        private readonly ITransaccionRepository iTransaccionRepository;
         private readonly IMapper imapper;
         private Utils utils;
 
@@ -18,11 +20,13 @@ namespace gestorPresupuestos.Controllers
             ITipoCuentaRepository iTipoCuentaRepository,
             IUsuarioRepository iUsuarioRepository,
             ICuentaRepository iCuentaRepository,
+            ITransaccionRepository iTransaccionRepository,
             IMapper imapper)
         {
             this.iTipoCuentaRepository = iTipoCuentaRepository;
             this.iUsuarioRepository = iUsuarioRepository;
             this.iCuentaRepository = iCuentaRepository;
+            this.iTransaccionRepository = iTransaccionRepository;
             this.imapper = imapper;
             utils = new Utils();
         }
@@ -158,6 +162,63 @@ namespace gestorPresupuestos.Controllers
             {
                 await iCuentaRepository.Borrar(id);
                 return RedirectToAction("Index");
+            }
+        }
+
+        //Visualizar los movimientos de la cuenta por mes.
+        public async Task<IActionResult> Detalle(int id, int mes, int anio)
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+            var cuenta = await iCuentaRepository.obtenerPorId(id, usuarioId);
+
+            if (cuenta is null)
+            {
+                return RedirectToAction("NoEncontrado", "Home");
+            }
+            else
+            {
+                DateTime fechaInicio;
+                DateTime fechaFin;
+
+                //si la fecha ingresada no es valida agarramos el mes actual
+                if (mes <=0 || mes >12 || anio <= 1900)
+                {
+                    fechaInicio = new DateTime(DateTime.Today.Year, DateTime.Today.Month,1);
+                }
+                else
+                {
+                    fechaInicio = new DateTime(anio,mes,1);
+                }
+
+                //Establecemos como fecha fin el ultimo dia del mismo mes de la fecha inicio:
+                fechaFin = fechaInicio.AddMonths(1).AddDays(-1);
+
+                var getTransaccionesPorCuenta = new ParametroGetTransaccionesPorCuenta()
+                {
+                    cuentaId = id,
+                    usuarioId = usuarioId,
+                    fechaInicio = fechaInicio,
+                    fechaFin = fechaFin
+                };
+
+                var transacciones = await iTransaccionRepository.ObtenerPorCuentaId(getTransaccionesPorCuenta);
+                var modelo = new ReporteTransaccionesDetalladas();
+                ViewBag.Cuenta = cuenta.nombre;
+
+                //Ordenamos las transacciones por fecha
+                var transaccionesPorFecha = transacciones.OrderByDescending(x => x.fechaTransaccion)
+                    .GroupBy(x => x.fechaTransaccion)
+                    .Select(group => new ReporteTransaccionesDetalladas.TransaccionesPorFecha()
+                    {
+                        fechaTransaccion = group.Key,
+                        Transacciones = group.AsEnumerable()
+                    });
+
+                modelo.transaccionesAgrupadas = transaccionesPorFecha;
+                modelo.fechaInicio = fechaInicio;
+                modelo.fechaFin = fechaFin;
+
+                return View(modelo);
             }
         }
     }

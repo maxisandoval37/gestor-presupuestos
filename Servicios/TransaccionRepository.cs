@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using gestorPresupuestos.Models;
+using gestorPresupuestos.Models.reportes;
 using Microsoft.Data.SqlClient;
 
 namespace gestorPresupuestos.Servicios
@@ -11,6 +12,7 @@ namespace gestorPresupuestos.Servicios
         Task<Transaccion> BuscarPorId(int id, int usuarioId);
         Task Actualizar(Transaccion transaccion, decimal montoAnterior, int cuentaAnterior);
         Task Borrar(int id);
+        Task<IEnumerable<Transaccion>> ObtenerPorCuentaId(ParametroGetTransaccionesPorCuenta modelo);
     }
     public class TransaccionRepository : ITransaccionRepository
     {
@@ -87,6 +89,16 @@ namespace gestorPresupuestos.Servicios
 
             await connection.ExecuteAsync("TRANSACCION_BORRAR", 
                 new { id }, commandType: System.Data.CommandType.StoredProcedure);
+        }
+
+        public async Task<IEnumerable<Transaccion>> ObtenerPorCuentaId(ParametroGetTransaccionesPorCuenta modelo)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<Transaccion>($@"SELECT transacciones.id, fecha_transaccion AS fechaTransaccion, monto, nota, cuenta_id AS cuentaId, categoria_id AS categoriaId,  cate.nombre as categoria, cuentas.nombre as cuenta, cate.tipo_operacion_id " +
+                "FROM transacciones INNER JOIN categorias cate ON cate.id = transacciones.categoria_id " +
+                "INNER JOIN cuentas ON cuentas.id = transacciones.cuenta_id " +
+                "WHERE transacciones.cuenta_id = @cuentaId AND transacciones.usuario_id = @usuarioId AND " +
+                "fecha_transaccion BETWEEN @fechaInicio AND fechaFin", modelo);
         }
     }
 }
