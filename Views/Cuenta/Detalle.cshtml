@@ -55,7 +55,7 @@
 
 @if (Model.transaccionesAgrupadas.Count() == 0)
 {
-    <h5 style="font-size: 26px">No hay transacciones para mostrar :(</h5>
+    <h5 class="h5-transacciones-grupadas">No hay transacciones para mostrar :(</h5>
 }
 else
 {
@@ -63,7 +63,7 @@ else
         <tbody>
             @foreach(var transaccionAgrupada in Model.transaccionesAgrupadas)
             {
-                <tr style="background-color: lightblue;font-size: 26px">
+                <tr class="tabla-tr-detalle">
                     <td colspan="3">@transaccionAgrupada.fechaTransaccion.Day
                         <span class="badge bg-secondary">@transaccionAgrupada.fechaTransaccion.ToString("ddd")</span>
                     </td>

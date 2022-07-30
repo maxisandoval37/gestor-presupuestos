@@ -38,3 +38,12 @@
 .acordeon-cuentas .accordion-collapse {
     font-size: 18px;
 }
+
+.tabla-tr-detalle {
+    background-color: lightblue;
+    font-size: 26px;
+}
+
+.h5-transacciones-grupadas {
+    font-size: 26px;
+}
