@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using gestorPresupuestos.Models;
-using gestorPresupuestos.Models.reportes;
+using gestorPresupuestos.Models.Reportes;
 using gestorPresupuestos.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -217,6 +217,12 @@ namespace gestorPresupuestos.Controllers
                 modelo.transaccionesAgrupadas = transaccionesPorFecha;
                 modelo.fechaInicio = fechaInicio;
                 modelo.fechaFin = fechaFin;
+
+                ViewBag.mesAnterior = fechaInicio.AddMonths(-1).Month;
+                ViewBag.anioAnterior = fechaInicio.AddMonths(-1).Year;
+
+                ViewBag.mesPosterior = fechaInicio.AddMonths(1).Month;
+                ViewBag.anioPosterior = fechaInicio.AddMonths(1).Year;
 
                 return View(modelo);
             }

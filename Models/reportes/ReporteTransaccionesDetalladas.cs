@@ -1,4 +1,4 @@
-﻿namespace gestorPresupuestos.Models.reportes
+﻿namespace gestorPresupuestos.Models.Reportes
 {
     public class ReporteTransaccionesDetalladas
     {

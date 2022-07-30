@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using gestorPresupuestos.Models;
-using gestorPresupuestos.Models.reportes;
+using gestorPresupuestos.Models.Reportes;
 using Microsoft.Data.SqlClient;
 
 namespace gestorPresupuestos.Servicios
@@ -98,7 +98,7 @@ namespace gestorPresupuestos.Servicios
                 "FROM transacciones INNER JOIN categorias cate ON cate.id = transacciones.categoria_id " +
                 "INNER JOIN cuentas ON cuentas.id = transacciones.cuenta_id " +
                 "WHERE transacciones.cuenta_id = @cuentaId AND transacciones.usuario_id = @usuarioId AND " +
-                "fecha_transaccion BETWEEN @fechaInicio AND fechaFin", modelo);
+                "fecha_transaccion BETWEEN @fechaInicio AND @fechaFin", modelo);
         }
     }
 }
