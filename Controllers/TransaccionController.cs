@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using gestorPresupuestos.Models;
+using gestorPresupuestos.Models.Reportes;
 using gestorPresupuestos.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -77,12 +78,59 @@ namespace gestorPresupuestos.Controllers
             }
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int mes, int anio)
         {
             var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
-            var transacciones = await iTransaccionRepository.BuscarPorUsuarioId(usuarioId);
 
-            return View(transacciones);
+            DateTime fechaInicio;
+            DateTime fechaFin;
+
+            //si la fecha ingresada no es valida agarramos el mes actual
+            if (mes <= 0 || mes > 12 || anio <= 1900)
+            {
+                fechaInicio = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            }
+            else
+            {
+                fechaInicio = new DateTime(anio, mes, 1);
+            }
+
+            //Establecemos como fecha fin el ultimo dia del mismo mes de la fecha inicio:
+            fechaFin = fechaInicio.AddMonths(1).AddDays(-1);
+
+            var parametro = new ParametroGetTransaccionesPorUsuario()
+            {
+                usuarioId = usuarioId,
+                fechaInicio = fechaInicio,
+                fechaFin = fechaFin
+            };
+
+            var transacciones = await iTransaccionRepository.ObtenerPorUsuarioId(parametro);
+
+            var modelo = new ReporteTransaccionesDetalladas();
+
+            //Ordenamos las transacciones por fecha
+            var transaccionesPorFecha = transacciones.OrderByDescending(x => x.fechaTransaccion)
+                .GroupBy(x => x.fechaTransaccion)
+                .Select(group => new ReporteTransaccionesDetalladas.TransaccionesPorFecha()
+                {
+                    fechaTransaccion = group.Key,
+                    Transacciones = group.AsEnumerable()
+                });
+
+            modelo.transaccionesAgrupadas = transaccionesPorFecha;
+            modelo.fechaInicio = fechaInicio;
+            modelo.fechaFin = fechaFin;
+
+            ViewBag.mesAnterior = fechaInicio.AddMonths(-1).Month;
+            ViewBag.anioAnterior = fechaInicio.AddMonths(-1).Year;
+
+            ViewBag.mesPosterior = fechaInicio.AddMonths(1).Month;
+            ViewBag.anioPosterior = fechaInicio.AddMonths(1).Year;
+
+            ViewBag.urlRegreso = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
+            return View(modelo);
         }
 
         private async Task<IEnumerable<SelectListItem>> ObtenerCuentas(int usuarioId)

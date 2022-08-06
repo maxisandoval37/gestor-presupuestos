@@ -13,6 +13,7 @@ namespace gestorPresupuestos.Servicios
         Task Actualizar(Transaccion transaccion, decimal montoAnterior, int cuentaAnterior);
         Task Borrar(int id);
         Task<IEnumerable<Transaccion>> ObtenerPorCuentaId(ParametroGetTransaccionesPorCuenta modelo);
+        Task<IEnumerable<Transaccion>> ObtenerPorUsuarioId(ParametroGetTransaccionesPorUsuario modelo);
     }
     public class TransaccionRepository : ITransaccionRepository
     {
@@ -99,6 +100,17 @@ namespace gestorPresupuestos.Servicios
                 "INNER JOIN cuentas ON cuentas.id = transacciones.cuenta_id " +
                 "WHERE transacciones.cuenta_id = @cuentaId AND transacciones.usuario_id = @usuarioId AND " +
                 "fecha_transaccion BETWEEN @fechaInicio AND @fechaFin", modelo);
+        }
+
+        public async Task<IEnumerable<Transaccion>> ObtenerPorUsuarioId(ParametroGetTransaccionesPorUsuario modelo)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<Transaccion>($@"SELECT transacciones.id, fecha_transaccion AS fechaTransaccion, monto, nota, cuenta_id AS cuentaId, categoria_id AS categoriaId,  cate.nombre as categoria, cuentas.nombre as cuenta, cate.tipo_operacion_id " +
+                "FROM transacciones INNER JOIN categorias cate ON cate.id = transacciones.categoria_id " +
+                "INNER JOIN cuentas ON cuentas.id = transacciones.cuenta_id " +
+                "WHERE transacciones.usuario_id = @usuarioId AND " +
+                "fecha_transaccion BETWEEN @fechaInicio AND @fechaFin "+
+                "ORDER BY transacciones.fecha_transaccion DESC", modelo);
         }
     }
 }
