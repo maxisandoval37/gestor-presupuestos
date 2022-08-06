@@ -1,40 +1,15 @@
-﻿@model IEnumerable<Transaccion>
+﻿@model gestorPresupuestos.Models.Reportes.ReporteTransaccionesDetalladas
 
 @{
-    ViewData["Title"] = "Listado de transacciones";
+    ViewData["Title"] = "Reporte diario de transacciones";
 }
 
-<h1>Listado de transacciones</h1>
+<h1>Reporte diario de transacciones</h1>
 <h5>
     Las transacciones permiten registrar los movientos de ingresos y egresos. 
     Tiene asociada una cuenta y categoría del tipo de registro.
 </h5>
 
 <br />
-<!--mb: margin button-->
-<a asp-action="Insertar" class="btn btn-primary mb-3">Crear nuevo</a>
-<br />
 
-<table width="100%" cellspacing="10" cellpadding="10" class="table">
-    <thead>
-        <tr>
-            <th>Monto</th>
-            <th>Notas</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var transaccion in Model)
-        {
-            <tr>
-                <td>
-                    @transaccion.monto
-                    <input type="hidden" value="@transaccion.id" class="ids"/>
-                </td>
-                <td>
-                    @transaccion.nota
-                    <input type="hidden" value="@transaccion.id" class="ids"/>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<partial name="_ReporteTransaccionDetalle" model="Model"/>
