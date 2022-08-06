@@ -48,7 +48,7 @@ namespace gestorPresupuestos.Servicios
             using var connection = new SqlConnection(connectionString);
             return await connection.QueryFirstOrDefaultAsync<Cuenta>(
                 $@"SELECT cuentas.id,cuentas.nombre,balance, " +
-                "descripcion, tc.id " +
+                "descripcion, tipo_cuenta_id " +
                 "FROM cuentas " +
                 "INNER JOIN tipo_cuenta tc " +
                 "ON tc.Id = cuentas.tipo_cuenta_id " +
