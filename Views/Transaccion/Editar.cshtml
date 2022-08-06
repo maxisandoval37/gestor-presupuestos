@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Editar Transaccion";
+
+    //Verifica si la url de regreso viene null:
+    var linkVolver = Model.urlRegreso ?? Url.Action("Index");
 }
 
 <h1>Editar Transaccion</h1>
@@ -16,6 +19,7 @@
     <input type="hidden" asp-for="id" />
     <input type="hidden" asp-for="cuentaAnteriorId" />
     <input type="hidden" asp-for="montoAnterior" />
+    <input type="hidden" asp-for="urlRegreso" />
 
     <br />
     <div class="mb-3">
@@ -58,7 +62,7 @@
 
     <button class="btn btn-danger" asp-action="Borrar">Borrar</button>
     <button class="btn btn-primary">Editar</button>
-    <a class="btn btn-primary" asp-action="Index">Volver</a>
+    <a class="btn btn-primary" href="@linkVolver">Volver</a>
 </form>
 
 @section Scripts{

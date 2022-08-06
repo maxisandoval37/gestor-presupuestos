@@ -224,6 +224,8 @@ namespace gestorPresupuestos.Controllers
                 ViewBag.mesPosterior = fechaInicio.AddMonths(1).Month;
                 ViewBag.anioPosterior = fechaInicio.AddMonths(1).Year;
 
+                ViewBag.urlRegreso = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
                 return View(modelo);
             }
         }

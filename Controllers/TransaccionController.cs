@@ -108,7 +108,7 @@ namespace gestorPresupuestos.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Editar(int id)
+        public async Task<IActionResult> Editar(int id, string urlRegreso)
         {
             var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
             var transaccion = await iTransaccionRepository.BuscarPorId(id, usuarioId);
@@ -133,6 +133,7 @@ namespace gestorPresupuestos.Controllers
                 modelo.cuentaAnteriorId = transaccion.cuentaId;
                 modelo.Categorias = await ObtenerCategorias(usuarioId, transaccion.tipoOperacionId);
                 modelo.Cuentas = await ObtenerCuentas(usuarioId);
+                modelo.urlRegreso = urlRegreso;
 
                 return View(modelo);
             }
@@ -177,12 +178,21 @@ namespace gestorPresupuestos.Controllers
                 }
 
                 await iTransaccionRepository.Actualizar(transaccion, modelo.montoAnterior, modelo.cuentaAnteriorId);
-                return RedirectToAction("Index");
+
+                if (string.IsNullOrEmpty(modelo.urlRegreso))
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    //nos permite redireccionar a una url que se encuentra dentro de nuestro dominio:
+                    return LocalRedirect(modelo.urlRegreso);
+                }
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Borrar(int id)
+        public async Task<IActionResult> Borrar(int id, string urlRegreso = null)
         {
             var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
             var transaccion = await iTransaccionRepository.BuscarPorId(id, usuarioId);
@@ -194,7 +204,16 @@ namespace gestorPresupuestos.Controllers
             else
             {
                 await iTransaccionRepository.Borrar(id);
+            }
+
+            if (string.IsNullOrEmpty(urlRegreso))
+            {
                 return RedirectToAction("Index");
+            }
+            else
+            {
+                //nos permite redireccionar a una url que se encuentra dentro de nuestro dominio:
+                return LocalRedirect(urlRegreso);
             }
         }
     }
