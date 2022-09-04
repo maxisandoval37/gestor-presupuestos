@@ -9,6 +9,8 @@ builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddTransient<ICuentaRepository, CuentaRepository>();
 builder.Services.AddTransient<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddTransient<ITransaccionRepository, TransaccionRepository>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<IServicioReporte, ServicioReporte>();
 builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
