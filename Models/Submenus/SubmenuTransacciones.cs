@@ -1,4 +1,4 @@
-﻿namespace gestorPresupuestos.Models
+﻿namespace gestorPresupuestos.Models.Submenus
 {
     public enum SubmenuTransacciones
     {
