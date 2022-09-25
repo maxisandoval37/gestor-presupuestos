@@ -219,5 +219,25 @@ namespace gestorPresupuestos.Controllers
                 return LocalRedirect(urlRegreso);
             }
         }
+
+        public IActionResult Semanal()
+        {
+            return View();
+        }
+
+        public IActionResult Mensual()
+        {
+            return View();
+        }
+
+        public IActionResult Excel()
+        {
+            return View();
+        }
+
+        public IActionResult Calendario()
+        {
+            return View();
+        }
     }
 }
