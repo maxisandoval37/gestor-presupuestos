@@ -119,13 +119,14 @@ namespace gestorPresupuestos.Servicios
         public async Task<IEnumerable<ResultadoPorSemana>> ObtenerPorSemana(ParametroGetTransaccionesPorUsuario modelo)
         {
             using var connection = new SqlConnection(connectionString);
-            return await connection.QueryAsync<ResultadoPorSemana>($@"select datediff(d, @fecha_inicio, @fecha_transaccion) / 7 + 1 as semana,
-                SUM(monto) as monto, cat.tipo_operacion_id
-                FROM transacciones
-                INNER JOIN categorias cat
-                ON cat.id = transacciones.categoria_id
-                WHERE transacciones.usuario_id = @usuario_id AND
-                fecha_transaccion BETWEEN @fechaInicio and @fechaFin
+            return await connection.QueryAsync<ResultadoPorSemana>(
+                $@"select datediff(d, @fechaInicio, fecha_transaccion) / 7 + 1 as semana, 
+                SUM(monto) as monto, cat.tipo_operacion_id 
+                FROM transacciones 
+                INNER JOIN categorias cat 
+                ON cat.id = transacciones.categoria_id 
+                WHERE transacciones.usuario_id = @usuarioId AND 
+                fecha_transaccion BETWEEN @fechaInicio and @fechaFin 
                 GROUP BY datediff(d, @fechaInicio, fecha_transaccion) / 7, cat.tipo_operacion_id", modelo);
         }
     }

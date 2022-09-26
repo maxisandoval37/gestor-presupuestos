@@ -239,8 +239,41 @@ namespace gestorPresupuestos.Controllers
 
                 }).ToList();
 
+
+            if (anio == 0 || mes == 0)
+            {
+                var hoy = DateTime.Today;
+                anio = hoy.Year;
+                mes = hoy.Month;
+            }
+
             var fechaReferencia = new DateTime(anio, mes, 1);
-            segmentarDias(fechaReferencia,anio, mes, 7, grupo);//por semana
+            var diasDelMes = Enumerable.Range(1, fechaReferencia.AddMonths(1).AddDays(-1).Day);
+            var diasSegmentos = diasDelMes.Chunk(7).ToList();
+
+            for (int i = 0; i < diasSegmentos.Count(); i++)
+            {
+                var segmento = i + 1;
+                var fechaInicio = new DateTime(anio, mes, diasSegmentos[i].First());
+                var fechaFin = new DateTime(anio, mes, diasSegmentos[i].Last());
+
+                var grupoSemana = grupo.FirstOrDefault(x => x.semana == segmento);
+
+                if (grupoSemana is null)
+                {
+                    grupo.Add(new ResultadoPorSemana()
+                    {
+                        semana = segmento,
+                        fechaInicio = fechaInicio,
+                        fechaFin = fechaFin
+                    });
+                }
+                else
+                {
+                    grupoSemana.fechaInicio = fechaInicio;
+                    grupoSemana.fechaFin = fechaFin;
+                }
+            }
 
             grupo = grupo.OrderByDescending(x => x.semana).ToList();
             var modelo = new ReporteSemanalViewModel();
@@ -250,19 +283,21 @@ namespace gestorPresupuestos.Controllers
             return View();
         }
 
-        private void segmentarDias(DateTime fechaReferencia, int anio, int mes, int diasSegmentar, List<ResultadoPorSemana> grupo)
+        
+        //TODO Ver si se implementa ese metodo o se descarta
+        private void segmentarDias(int anio, int mes, int diasSegmentar, List<ResultadoPorSemana> grupo)
         {
             if (anio == 0 || mes == 0)
             {
                 var hoy = DateTime.Today;
                 anio = hoy.Year;
                 mes = hoy.Month;
-
-                fechaReferencia = new DateTime(anio, mes, 1);
             }
 
+            var fechaReferencia = new DateTime(anio, mes, 1);
             var diasDelMes = Enumerable.Range(1, fechaReferencia.AddMonths(1).AddDays(-1).Day);
             var diasSegmentos = diasDelMes.Chunk(diasSegmentar).ToList();
+
 
             for (int i = 0; i < diasSegmentos.Count(); i++)
             {
