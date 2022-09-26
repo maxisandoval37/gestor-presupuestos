@@ -4,6 +4,9 @@ using gestorPresupuestos.Models.Submenus;
 using gestorPresupuestos.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace gestorPresupuestos.Controllers
 {
@@ -226,9 +229,65 @@ namespace gestorPresupuestos.Controllers
             var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
             IEnumerable<ResultadoPorSemana> transaccionesPorSemana = await 
                 iServicioReporte.ObtenerReporteSemanal(usuarioId, mes, anio, ViewBag);
-            
-            //TODO
+
+            var grupo = transaccionesPorSemana.GroupBy(x => x.semana).Select(x =>
+                new ResultadoPorSemana()
+                {
+                    semana = x.Key,
+                    ingresos = x.Where(x => x.tipoOperacionId == TipoOperacion.Ingreso).Select(x => x.monto).FirstOrDefault(),
+                    egresos = x.Where(x => x.tipoOperacionId == TipoOperacion.Egreso).Select(x => x.monto).FirstOrDefault()
+
+                }).ToList();
+
+            var fechaReferencia = new DateTime(anio, mes, 1);
+            segmentarDias(fechaReferencia,anio, mes, 7, grupo);//por semana
+
+            grupo = grupo.OrderByDescending(x => x.semana).ToList();
+            var modelo = new ReporteSemanalViewModel();
+            modelo.transaccionesPorSemana = grupo;
+            modelo.fechaReferencia = fechaReferencia;
+
             return View();
+        }
+
+        private void segmentarDias(DateTime fechaReferencia, int anio, int mes, int diasSegmentar, List<ResultadoPorSemana> grupo)
+        {
+            if (anio == 0 || mes == 0)
+            {
+                var hoy = DateTime.Today;
+                anio = hoy.Year;
+                mes = hoy.Month;
+
+                fechaReferencia = new DateTime(anio, mes, 1);
+            }
+
+            var diasDelMes = Enumerable.Range(1, fechaReferencia.AddMonths(1).AddDays(-1).Day);
+            var diasSegmentos = diasDelMes.Chunk(diasSegmentar).ToList();
+
+            for (int i = 0; i < diasSegmentos.Count(); i++)
+            {
+                var segmento = i + 1;
+                var fechaInicio = new DateTime(anio, mes, diasSegmentos[i].First());
+                var fechaFin = new DateTime(anio, mes, diasSegmentos[i].Last());
+
+                //TODO ver si se puede extraer
+                var grupoSemana = grupo.FirstOrDefault(x => x.semana == segmento);
+
+                if (grupoSemana is null)
+                {
+                    grupo.Add(new ResultadoPorSemana()
+                    {
+                        semana = segmento,
+                        fechaInicio = fechaInicio,
+                        fechaFin = fechaFin
+                    });
+                }
+                else
+                {
+                    grupoSemana.fechaInicio = fechaInicio;
+                    grupoSemana.fechaFin = fechaFin;
+                }
+            }
         }
 
         public IActionResult Mensual()
