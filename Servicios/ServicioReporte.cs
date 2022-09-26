@@ -1,5 +1,6 @@
 ﻿using gestorPresupuestos.Models;
 using gestorPresupuestos.Models.Reportes;
+using gestorPresupuestos.Models.Submenus;
 
 namespace gestorPresupuestos.Servicios
 {
@@ -7,6 +8,7 @@ namespace gestorPresupuestos.Servicios
     {
         Task<ReporteTransaccionesDetalladas> getReporteTransaccionesDetalladasPorCuenta(int usuarioId, int cuentaId, int mes, int anio, dynamic ViewBag);
         Task<ReporteTransaccionesDetalladas> getReporteTransaccionesDetalladas(int usuarioId, int mes, int anio, dynamic ViewBag);
+        Task<IEnumerable<ResultadoPorSemana>> ObtenerReporteSemanal(int usuarioId, int mes, int anio, dynamic ViewBag);
     }
     public class ServicioReporte: IServicioReporte
     {
@@ -107,5 +109,24 @@ namespace gestorPresupuestos.Servicios
 
             ViewBag.urlRegreso = httpContext.Request.Path + httpContext.Request.QueryString;
         }
+
+        //Inicio queries Submenus:
+        public async Task<IEnumerable<ResultadoPorSemana>> ObtenerReporteSemanal(int usuarioId, int mes, int anio, dynamic ViewBag)
+        {
+            (DateTime fechaInicio, DateTime fechaFin) = generarFechaInicioYFin(mes, anio);
+
+            var parametro = new ParametroGetTransaccionesPorUsuario()
+            {
+                usuarioId = usuarioId,
+                fechaInicio = fechaInicio,
+                fechaFin = fechaFin
+            };
+
+            asignarValoresViewBag(ViewBag, fechaInicio);
+            var modelo = await iTransaccionRepository.ObtenerPorSemana(parametro);
+
+            return modelo;
+        }
+
     }
 }

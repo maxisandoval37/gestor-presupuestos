@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using gestorPresupuestos.Models;
 using gestorPresupuestos.Models.Reportes;
+using gestorPresupuestos.Models.Submenus;
 using Microsoft.Data.SqlClient;
 
 namespace gestorPresupuestos.Servicios
@@ -14,6 +15,7 @@ namespace gestorPresupuestos.Servicios
         Task Borrar(int id);
         Task<IEnumerable<Transaccion>> ObtenerPorCuentaId(ParametroGetTransaccionesPorCuenta modelo);
         Task<IEnumerable<Transaccion>> ObtenerPorUsuarioId(ParametroGetTransaccionesPorUsuario modelo);
+        Task<IEnumerable<ResultadoPorSemana>> ObtenerPorSemana(ParametroGetTransaccionesPorUsuario modelo);
     }
     public class TransaccionRepository : ITransaccionRepository
     {
@@ -111,6 +113,20 @@ namespace gestorPresupuestos.Servicios
                 "WHERE transacciones.usuario_id = @usuarioId AND " +
                 "fecha_transaccion BETWEEN @fechaInicio AND @fechaFin "+
                 "ORDER BY transacciones.fecha_transaccion DESC", modelo);
+        }
+
+        //Inicio queries Submenus:
+        public async Task<IEnumerable<ResultadoPorSemana>> ObtenerPorSemana(ParametroGetTransaccionesPorUsuario modelo)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<ResultadoPorSemana>($@"select datediff(d, @fecha_inicio, @fecha_transaccion) / 7 + 1 as semana,
+                SUM(monto) as monto, cat.tipo_operacion_id
+                FROM transacciones
+                INNER JOIN categorias cat
+                ON cat.id = transacciones.categoria_id
+                WHERE transacciones.usuario_id = @usuario_id AND
+                fecha_transaccion BETWEEN @fechaInicio and @fechaFin
+                GROUP BY datediff(d, @fechaInicio, fecha_transaccion) / 7, cat.tipo_operacion_id", modelo);
         }
     }
 }

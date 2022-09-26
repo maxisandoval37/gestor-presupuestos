@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using gestorPresupuestos.Models;
+using gestorPresupuestos.Models.Submenus;
 using gestorPresupuestos.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -220,8 +221,13 @@ namespace gestorPresupuestos.Controllers
             }
         }
 
-        public IActionResult Semanal()
+        public async Task<IActionResult> Semanal(int mes, int anio)
         {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+            IEnumerable<ResultadoPorSemana> transaccionesPorSemana = await 
+                iServicioReporte.ObtenerReporteSemanal(usuarioId, mes, anio, ViewBag);
+            
+            //TODO
             return View();
         }
 
