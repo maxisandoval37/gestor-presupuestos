@@ -1,6 +1,18 @@
 ﻿@using gestorPresupuestos.Models.Submenus
+@model gestorPresupuestos.Models.Submenus.ReporteSemanalViewModel
 @{
     ViewData["Title"] = "Reporte semanal de transacciones";
+
+    String formatearFecha(DateTime fecha){
+        return fecha.ToString("dd/MM");
+    }
+
+    var resumenMontos = new ResumenMontosViewModel()
+    {
+        ingresos = Model.ingresos,
+        egresos = Model.egresos,
+        total = Model.total
+    };
 }
 
 <h1>Reporte semanal de transacciones</h1>
@@ -13,3 +25,36 @@
 
 <partial name="_Submenu" model="SubmenuTransacciones.Semanal"/>
 <br />
+<partial name="_ResumenMontos" model="@resumenMontos"></partial>
+<br />
+
+<table class="table" style="font-size: 21px">
+    <thead>
+        <tr>
+            <th>Semana</th>
+            <th style="text-align: right">Ingresos</th>
+            <th style="text-align: right">Egresos</th>
+        </tr>
+    </thead>
+    @foreach (var transPorSemana in Model.transaccionesPorSemana){
+        <tr>
+            <td>
+                <a style="text-decoration: none" asp-action="Index" 
+                asp-route-anio="@Model.fechaReferencia.Year"
+                asp-route-anio="@Model.fechaReferencia.Month">
+
+                    @formatearFecha(transPorSemana.fechaInicio) al
+                    @formatearFecha(transPorSemana.fechaFin)
+
+                </a>
+            </td>
+
+            <td class="ingresos" style="text-align: right">
+                @transPorSemana.ingresos
+            </td>
+            <td class="egresos" style="text-align: right">
+                @transPorSemana.egresos
+            </td>
+        </tr>
+    }
+</table>

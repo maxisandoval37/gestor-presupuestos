@@ -1,5 +1,14 @@
-﻿@model gestorPresupuestos.Models.Reportes.ReporteTransaccionesDetalladas
+﻿@using gestorPresupuestos.Models.Submenus
+@model gestorPresupuestos.Models.Reportes.ReporteTransaccionesDetalladas
 
+@{
+    var resumenMontos = new ResumenMontosViewModel()
+    {
+        ingresos = Model.balanceIngresos,
+        egresos = Model.balanceEgresos,
+        total = Model.total
+    };
+}
 
 <h4>
     <a asp-route-mes="@ViewBag.mesAnterior" asp-route-anio="@ViewBag.anioAnterior" 
@@ -19,34 +28,7 @@
     </a>
 </h4>
 
-<div class="container-totales mb-3">
-    <div>
-        <div>
-            <b>Ingresos</b>
-        </div>
-        <div class="ingresos">
-            @Model.balanceIngresos.ToString("N")
-        </div>
-    </div>
-
-    <div>
-        <div>
-            <b>Egresos</b>
-        </div>
-        <div class="egresos">
-            @Model.balanceEgresos.ToString("N")
-        </div>
-    </div>
-
-    <div>
-        <div>
-            <b>Totales</b>
-        </div>
-        <div class="activo">
-            @Model.total.ToString("N")
-        </div>
-    </div>
-</div>
+<partial name="_ResumenMontos" model="@resumenMontos"></partial>
 
 @if (Model.transaccionesAgrupadas.Count() == 0)
 {

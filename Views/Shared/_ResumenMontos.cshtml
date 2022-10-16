@@ -1,0 +1,33 @@
+﻿@using gestorPresupuestos.Models.Submenus
+@model gestorPresupuestos.Models.Submenus.ResumenMontosViewModel
+
+<div class="container-totales mb-3">
+
+    <div>
+        <div>
+            <b>Ingresos</b>
+        </div>
+        <div class="ingresos">
+            @Model.ingresos.ToString("N")
+        </div>
+    </div>
+
+    <div>
+        <div>
+            <b>Egresos</b>
+        </div>
+        <div class="egresos">
+            @Model.egresos.ToString("N")
+        </div>
+    </div>
+
+    <div>
+        <div>
+            <b>Total</b>
+        </div>
+        <div>
+            @Model.total.ToString("N")
+        </div>
+    </div>
+
+</div>
