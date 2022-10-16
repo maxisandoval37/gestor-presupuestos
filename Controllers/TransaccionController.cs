@@ -4,9 +4,6 @@ using gestorPresupuestos.Models.Submenus;
 using gestorPresupuestos.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace gestorPresupuestos.Controllers
 {
@@ -280,7 +277,7 @@ namespace gestorPresupuestos.Controllers
             modelo.transaccionesPorSemana = grupo;
             modelo.fechaReferencia = fechaReferencia;
 
-            return View();
+            return View(modelo);
         }
 
         
