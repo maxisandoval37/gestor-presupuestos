@@ -25,8 +25,8 @@
 
 <partial name="_Submenu" model="SubmenuTransacciones.Semanal"/>
 <br />
+<partial name="_NavegacionPorMeses" model="@Model.fechaReferencia" />
 <partial name="_ResumenMontos" model="@resumenMontos"></partial>
-<br />
 
 <table class="table" style="font-size: 21px">
     <thead>
@@ -41,7 +41,7 @@
             <td>
                 <a style="text-decoration: none" asp-action="Index" 
                 asp-route-anio="@Model.fechaReferencia.Year"
-                asp-route-anio="@Model.fechaReferencia.Month">
+                asp-route-mes="@Model.fechaReferencia.Month">
 
                     @formatearFecha(transPorSemana.fechaInicio) al
                     @formatearFecha(transPorSemana.fechaFin)
