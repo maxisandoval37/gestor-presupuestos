@@ -1,15 +1,76 @@
 ﻿@using gestorPresupuestos.Models.Submenus
+@model gestorPresupuestos.Models.Submenus.ReporteMensualViewModel
 @{
     ViewData["Title"] = "Reporte mensual de transacciones";
+
+    int anioAnterior = Model.anio - 1;
+    int anioPosterior = Model.anio + 1;
+
+    String primerLetraMayus(String texto)
+    {
+        try
+        {
+            string input = texto.ToString().ToLower() ?? throw new Exception();
+            return input.First().ToString().ToUpper() + input.Substring(1);
+        }
+        catch { return string.Empty; }
+    }
+
+    var resumenMontos = new ResumenMontosViewModel()
+            {
+                ingresos = Model.ingresos,
+                egresos = Model.egresos,
+                total = Model.total
+            };
 }
 
 <h1>Reporte mensual de transacciones</h1>
 <h5>
-    Las transacciones permiten registrar los movientos de ingresos y egresos. 
+    Las transacciones permiten registrar los movientos de ingresos y egresos.
     Tiene asociada una cuenta y categoría del tipo de registro.
 </h5>
 
 <br />
 
-<partial name="_Submenu" model="SubmenuTransacciones.Mensual"/>
+<partial name="_Submenu" model="SubmenuTransacciones.Mensual" />
 <br />
+<h4>
+    Mostrando transacciones de
+    <a asp-route-anio="@anioAnterior" class="btn btn-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+        </svg>
+    </a> @Model.anio
+    <a asp-route-anio="@anioPosterior" class="btn btn-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+        </svg>
+    </a>
+</h4>
+
+<partial name="_ResumenMontos" model="@resumenMontos" />
+
+<table class="table" style="font-size: 20px">
+    <thead>
+        <tr style="background-color: lightblue">
+            <th>Mes</th>
+            <th style="text-align: right">Ingresos</th>
+            <th style="text-align: right">Egresos</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transaccionPorMes in Model.transaccionesPorMes)
+        {
+            <tr>
+                <td>
+                    <a style="text-decoration: none;" asp-action="Index"
+                   asp-route-anio="@Model.anio" asp-route-mes="@transaccionPorMes.mes">
+                        @primerLetraMayus(transaccionPorMes.fechaReferencia.ToString("MMMMMM"))
+                    </a>
+                </td>
+                <td class="ingresos" style="text-align: right">@transaccionPorMes.ingresos</td>
+                <td class="egresos" style="text-align: right">@transaccionPorMes.egresos</td>
+            </tr>
+        }
+    </tbody>
+</table>
