@@ -322,9 +322,52 @@ namespace gestorPresupuestos.Controllers
             }
         }
 
-        public IActionResult Mensual()
+        public async Task<IActionResult> Mensual(int anio)
         {
-            return View();
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+
+            if (anio == 0)
+            {
+                anio = DateTime.Today.Year;
+            }
+
+            var transaccionesPorMes = await iTransaccionRepository.ObtenerPorMes(usuarioId,anio);
+            var transaccionesAgrupadas = transaccionesPorMes.GroupBy(x => x.mes).
+                Select(x => new ResultadoPorMes()
+                {
+                    mes = x.Key,
+                    ingresos = x.Where(x => x.tipoOperacionId == TipoOperacion.Ingreso).
+                    Select(x => x.monto).FirstOrDefault(),
+                    egresos = x.Where(x => x.tipoOperacionId == TipoOperacion.Egreso).
+                    Select(x => x.monto).FirstOrDefault()
+                }).ToList();
+
+            for (int mes=1; mes <= 12; mes++)
+            {
+                var transaccion = transaccionesAgrupadas.FirstOrDefault(x => x.mes == mes);
+                var fechaReferencia = new DateTime(anio, mes, 1);
+
+                if (transaccion is null)
+                {
+                    transaccionesAgrupadas.Add(new ResultadoPorMes()
+                    {
+                        mes = mes,
+                        fechaReferencia = fechaReferencia
+                    });
+                }
+                else
+                {
+                    transaccion.fechaReferencia = fechaReferencia;
+                }
+            }
+
+            transaccionesAgrupadas = transaccionesAgrupadas.OrderByDescending(x => x.mes).ToList();
+            
+            var reporteMensualViewModel = new ReporteMensualViewModel();
+            reporteMensualViewModel.anio = anio;
+            reporteMensualViewModel.transaccionesPorMes = transaccionesAgrupadas;
+
+            return View(reporteMensualViewModel);
         }
 
         public IActionResult Excel()

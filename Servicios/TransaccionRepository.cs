@@ -16,6 +16,7 @@ namespace gestorPresupuestos.Servicios
         Task<IEnumerable<Transaccion>> ObtenerPorCuentaId(ParametroGetTransaccionesPorCuenta modelo);
         Task<IEnumerable<Transaccion>> ObtenerPorUsuarioId(ParametroGetTransaccionesPorUsuario modelo);
         Task<IEnumerable<ResultadoPorSemana>> ObtenerPorSemana(ParametroGetTransaccionesPorUsuario modelo);
+        Task<IEnumerable<ResultadoPorMes>> ObtenerPorMes(int usuarioId, int anio);
     }
     public class TransaccionRepository : ITransaccionRepository
     {
@@ -128,6 +129,19 @@ namespace gestorPresupuestos.Servicios
                 WHERE transacciones.usuario_id = @usuarioId AND 
                 fecha_transaccion BETWEEN @fechaInicio and @fechaFin 
                 GROUP BY datediff(d, @fechaInicio, fecha_transaccion) / 7, cat.tipo_operacion_id", modelo);
+        }
+
+        public async Task<IEnumerable<ResultadoPorMes>> ObtenerPorMes(int usuarioId, int anio)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<ResultadoPorMes>(
+                $@"SELECT MONTH(fecha_transaccion) AS mes,
+                SUM(monto) AS monto, cat.tipo_operacion_id
+                FROM transacciones
+                INNER JOIN categorias cat
+                ON cat.Id = transacciones.categoria_id
+                WHERE Transacciones.usuario_id = @usuarioId AND YEAR(fecha_transaccion) = @anio
+                GROUP BY MONTH(fecha_transaccion), cat.tipo_operacion_id", new { usuarioId,anio});
         }
     }
 }
