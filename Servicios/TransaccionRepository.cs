@@ -98,7 +98,7 @@ namespace gestorPresupuestos.Servicios
         public async Task<IEnumerable<Transaccion>> ObtenerPorCuentaId(ParametroGetTransaccionesPorCuenta modelo)
         {
             using var connection = new SqlConnection(connectionString);
-            return await connection.QueryAsync<Transaccion>($@"SELECT transacciones.id, fecha_transaccion AS fechaTransaccion, monto, nota, cuenta_id AS cuentaId, categoria_id AS categoriaId,  cate.nombre as categoria, cuentas.nombre as cuenta, cate.tipo_operacion_id " +
+            return await connection.QueryAsync<Transaccion>($@"SELECT transacciones.id, fecha_transaccion AS fechaTransaccion, monto, nota, cuenta_id AS cuentaId, categoria_id AS categoriaId,  cate.nombre as categoria, cuentas.nombre as cuenta, cate.tipo_operacion_id  AS tipoOperacionId " +
                 "FROM transacciones INNER JOIN categorias cate ON cate.id = transacciones.categoria_id " +
                 "INNER JOIN cuentas ON cuentas.id = transacciones.cuenta_id " +
                 "WHERE transacciones.cuenta_id = @cuentaId AND transacciones.usuario_id = @usuarioId AND " +
@@ -108,7 +108,7 @@ namespace gestorPresupuestos.Servicios
         public async Task<IEnumerable<Transaccion>> ObtenerPorUsuarioId(ParametroGetTransaccionesPorUsuario modelo)
         {
             using var connection = new SqlConnection(connectionString);
-            return await connection.QueryAsync<Transaccion>($@"SELECT transacciones.id, fecha_transaccion AS fechaTransaccion, monto, nota, cuenta_id AS cuentaId, categoria_id AS categoriaId,  cate.nombre as categoria, cuentas.nombre as cuenta, cate.tipo_operacion_id " +
+            return await connection.QueryAsync<Transaccion>($@"SELECT transacciones.id, fecha_transaccion AS fechaTransaccion, monto, nota, cuenta_id AS cuentaId, categoria_id AS categoriaId,  cate.nombre as categoria, cuentas.nombre as cuenta, cate.tipo_operacion_id AS tipoOperacionId " +
                 "FROM transacciones INNER JOIN categorias cate ON cate.id = transacciones.categoria_id " +
                 "INNER JOIN cuentas ON cuentas.id = transacciones.cuenta_id " +
                 "WHERE transacciones.usuario_id = @usuarioId AND " +
@@ -122,7 +122,7 @@ namespace gestorPresupuestos.Servicios
             using var connection = new SqlConnection(connectionString);
             return await connection.QueryAsync<ResultadoPorSemana>(
                 $@"select datediff(d, @fechaInicio, fecha_transaccion) / 7 + 1 as semana, 
-                SUM(monto) as monto, cat.tipo_operacion_id 
+                SUM(monto) as monto, cat.tipo_operacion_id  AS tipoOperacionId
                 FROM transacciones 
                 INNER JOIN categorias cat 
                 ON cat.id = transacciones.categoria_id 
@@ -136,7 +136,7 @@ namespace gestorPresupuestos.Servicios
             using var connection = new SqlConnection(connectionString);
             return await connection.QueryAsync<ResultadoPorMes>(
                 $@"SELECT MONTH(fecha_transaccion) AS mes,
-                SUM(monto) AS monto, cat.tipo_operacion_id
+                SUM(monto) AS monto, cat.tipo_operacion_id AS tipoOperacionId
                 FROM transacciones
                 INNER JOIN categorias cat
                 ON cat.Id = transacciones.categoria_id
