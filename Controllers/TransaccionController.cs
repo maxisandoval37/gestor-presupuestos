@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using ClosedXML.Excel;
 using gestorPresupuestos.Models;
 using gestorPresupuestos.Models.Submenus;
 using gestorPresupuestos.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Data;
 
 namespace gestorPresupuestos.Controllers
 {
@@ -224,7 +226,7 @@ namespace gestorPresupuestos.Controllers
         public async Task<IActionResult> Semanal(int mes, int anio)
         {
             var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
-            IEnumerable<ResultadoPorSemana> transaccionesPorSemana = await 
+            IEnumerable<ResultadoPorSemana> transaccionesPorSemana = await
                 iServicioReporte.ObtenerReporteSemanal(usuarioId, mes, anio, ViewBag);
 
             var grupo = transaccionesPorSemana.GroupBy(x => x.semana).Select(x =>
@@ -289,7 +291,7 @@ namespace gestorPresupuestos.Controllers
                 anio = DateTime.Today.Year;
             }
 
-            var transaccionesPorMes = await iTransaccionRepository.ObtenerPorMes(usuarioId,anio);
+            var transaccionesPorMes = await iTransaccionRepository.ObtenerPorMes(usuarioId, anio);
             var transaccionesAgrupadas = transaccionesPorMes.GroupBy(x => x.mes).
                 Select(x => new ResultadoPorMes()
                 {
@@ -300,7 +302,7 @@ namespace gestorPresupuestos.Controllers
                     Select(x => x.monto).FirstOrDefault()
                 }).ToList();
 
-            for (int mes=1; mes <= 12; mes++)
+            for (int mes = 1; mes <= 12; mes++)
             {
                 var transaccion = transaccionesAgrupadas.FirstOrDefault(x => x.mes == mes);
                 var fechaReferencia = new DateTime(anio, mes, 1);
@@ -320,7 +322,7 @@ namespace gestorPresupuestos.Controllers
             }
 
             transaccionesAgrupadas = transaccionesAgrupadas.OrderByDescending(x => x.mes).ToList();
-            
+
             var reporteMensualViewModel = new ReporteMensualViewModel();
             reporteMensualViewModel.anio = anio;
             reporteMensualViewModel.transaccionesPorMes = transaccionesAgrupadas;
@@ -331,6 +333,56 @@ namespace gestorPresupuestos.Controllers
         public IActionResult Excel()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<FileResult> ExportarExcelPorMes(int mes, int anio)
+        {
+            var fechaInicio = new DateTime(anio, mes, 1);
+            var fechaFin = fechaInicio.AddMonths(1).AddDays(-1);
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+
+            var transacciones = await iTransaccionRepository.ObtenerPorUsuarioId(
+                new Models.Reportes.ParametroGetTransaccionesPorUsuario
+                {
+                    usuarioId = usuarioId,
+                    fechaInicio = fechaInicio,
+                    fechaFin = fechaFin
+                });
+
+            var fileName = $"Presupuesto - {fechaInicio.ToString("MMM yyyy")}.xlsx";
+            return GenerarExcelTransacciones(fileName, transacciones);
+        }
+
+        private FileResult GenerarExcelTransacciones(string fileName, IEnumerable<Transaccion> transacciones)
+        {
+            DataTable dataTable = new DataTable("Transacciones");
+            dataTable.Columns.AddRange(new DataColumn[] {
+                new DataColumn("Fecha"),
+                new DataColumn("Cuenta"),
+                new DataColumn("Categoria"),
+                new DataColumn("Nota"),
+                new DataColumn("Monto"),
+                new DataColumn("Ingreso/Egreso"),
+            });
+
+            foreach (var t in transacciones)
+            {
+                dataTable.Rows.Add(t.fechaTransaccion, t.cuenta, t.categoria, t.nota, t.monto, t.tipoOperacionId);
+            }
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                wb.Worksheets.Add(dataTable);
+
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    wb.SaveAs(stream);
+                    var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+                    return File(stream.ToArray(), contentType, fileName);
+                }
+            }
         }
 
         public IActionResult Calendario()
