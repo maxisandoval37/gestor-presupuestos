@@ -357,6 +357,47 @@ namespace gestorPresupuestos.Controllers
             return GenerarExcelTransacciones(fileName, transacciones);
         }
 
+        [HttpGet]
+        public async Task<FileResult> ExportarExcelPorAnio(int anio)
+        {
+            var fechaInicio = new DateTime(anio, 1, 1);
+            var fechaFin = fechaInicio.AddYears(1).AddDays(-1);
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+
+            var transacciones = await iTransaccionRepository.ObtenerPorUsuarioId(
+                new Models.Reportes.ParametroGetTransaccionesPorUsuario
+                {
+                    usuarioId = usuarioId,
+                    fechaInicio = fechaInicio,
+                    fechaFin = fechaFin
+                });
+
+            var fechaYHoraActual = DateTime.Now.ToString("dd/MM/yy HH:mm:ss");
+            var fileName = $"Presupuesto - {fechaInicio.ToString("yyyy")} ({fechaYHoraActual}).xlsx";
+            return GenerarExcelTransacciones(fileName, transacciones);
+        }
+
+        [HttpGet]
+        public async Task<FileResult> ExportarExcelTodo()
+        {
+            var fechaInicio = new DateTime(1900, 1, 1);
+            var fechaFin = fechaInicio.AddYears(1000);
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+
+            var transacciones = await iTransaccionRepository.ObtenerPorUsuarioId(
+                new Models.Reportes.ParametroGetTransaccionesPorUsuario
+                {
+                    usuarioId = usuarioId,
+                    fechaInicio = fechaInicio,
+                    fechaFin = fechaFin
+                });
+
+
+            var fechaYHoraActual = DateTime.Now.ToString("dd/MM/yy HH:mm:ss");
+            var fileName = $"Presupuesto - Historico ({fechaYHoraActual}).xlsx";
+            return GenerarExcelTransacciones(fileName, transacciones);
+        }
+
         private FileResult GenerarExcelTransacciones(string fileName, IEnumerable<Transaccion> transacciones)
         {
             DataTable dataTable = new DataTable("Transacciones");
