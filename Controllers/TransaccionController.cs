@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Data;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace gestorPresupuestos.Controllers
 {
@@ -337,65 +338,51 @@ namespace gestorPresupuestos.Controllers
         }
 
         [HttpGet]
-        public async Task<FileResult> ExportarExcelPorMes(int mes, int anio)
+        public Task<FileResult> ExportarExcelPorMes(int mes, int anio)
         {
             var fechaInicio = new DateTime(anio, mes, 1);
             var fechaFin = fechaInicio.AddMonths(1).AddDays(-1);
-            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
-
-            var transacciones = await iTransaccionRepository.ObtenerPorUsuarioId(
-                new Models.Reportes.ParametroGetTransaccionesPorUsuario
-                {
-                    usuarioId = usuarioId,
-                    fechaInicio = fechaInicio,
-                    fechaFin = fechaFin
-                });
-
-
             var fechaYHoraActual = DateTime.Now.ToString("dd/MM/yy HH:mm:ss");
             var fileName = $"Presupuesto - {fechaInicio.ToString("MMM yyyy")} ({fechaYHoraActual}).xlsx";
-            return GenerarExcelTransacciones(fileName, transacciones);
+
+            return ExportarExcelTransaccionGenerico(fechaInicio, fechaFin, fileName);
         }
 
         [HttpGet]
-        public async Task<FileResult> ExportarExcelPorAnio(int anio)
+        public Task<FileResult> ExportarExcelPorAnio(int anio)
         {
             var fechaInicio = new DateTime(anio, 1, 1);
             var fechaFin = fechaInicio.AddYears(1).AddDays(-1);
-            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
-
-            var transacciones = await iTransaccionRepository.ObtenerPorUsuarioId(
-                new Models.Reportes.ParametroGetTransaccionesPorUsuario
-                {
-                    usuarioId = usuarioId,
-                    fechaInicio = fechaInicio,
-                    fechaFin = fechaFin
-                });
-
             var fechaYHoraActual = DateTime.Now.ToString("dd/MM/yy HH:mm:ss");
             var fileName = $"Presupuesto - {fechaInicio.ToString("yyyy")} ({fechaYHoraActual}).xlsx";
-            return GenerarExcelTransacciones(fileName, transacciones);
+
+            return ExportarExcelTransaccionGenerico(fechaInicio, fechaFin, fileName);
         }
 
         [HttpGet]
-        public async Task<FileResult> ExportarExcelTodo()
+        public Task<FileResult> ExportarExcelTodo()//historico
         {
             var fechaInicio = new DateTime(1900, 1, 1);
             var fechaFin = fechaInicio.AddYears(1000);
+            var fechaYHoraActual = DateTime.Now.ToString("dd/MM/yy HH:mm:ss");
+            var fileName = $"Presupuesto - Historico ({fechaYHoraActual}).xlsx";
+
+            return ExportarExcelTransaccionGenerico(fechaInicio, fechaFin, fileName);
+        }
+
+        private async Task<FileResult> ExportarExcelTransaccionGenerico(DateTime fechaInicio, DateTime fechaFin, String nombreArchivo)
+        {
             var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
 
             var transacciones = await iTransaccionRepository.ObtenerPorUsuarioId(
-                new Models.Reportes.ParametroGetTransaccionesPorUsuario
-                {
-                    usuarioId = usuarioId,
-                    fechaInicio = fechaInicio,
-                    fechaFin = fechaFin
-                });
+            new Models.Reportes.ParametroGetTransaccionesPorUsuario
+            {
+                usuarioId = usuarioId,
+                fechaInicio = fechaInicio,
+                fechaFin = fechaFin
+            });
 
-
-            var fechaYHoraActual = DateTime.Now.ToString("dd/MM/yy HH:mm:ss");
-            var fileName = $"Presupuesto - Historico ({fechaYHoraActual}).xlsx";
-            return GenerarExcelTransacciones(fileName, transacciones);
+            return GenerarExcelTransacciones(nombreArchivo, transacciones);
         }
 
         private FileResult GenerarExcelTransacciones(string fileName, IEnumerable<Transaccion> transacciones)
