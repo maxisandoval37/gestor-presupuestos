@@ -6,6 +6,7 @@ using gestorPresupuestos.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace gestorPresupuestos.Controllers
 {
@@ -350,7 +351,9 @@ namespace gestorPresupuestos.Controllers
                     fechaFin = fechaFin
                 });
 
-            var fileName = $"Presupuesto - {fechaInicio.ToString("MMM yyyy")}.xlsx";
+
+            var fechaYHoraActual = DateTime.Now.ToString("dd/MM/yy HH:mm:ss");
+            var fileName = $"Presupuesto - {fechaInicio.ToString("MMM yyyy")} ({fechaYHoraActual}).xlsx";
             return GenerarExcelTransacciones(fileName, transacciones);
         }
 
