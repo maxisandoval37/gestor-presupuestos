@@ -1,6 +1,15 @@
 ﻿@using gestorPresupuestos.Models.Submenus
 @{
     ViewData["Title"] = "Reporte excel de transacciones";
+    var fechaActual = DateTime.Today;
+    var mesActual = fechaActual.Month;
+    var anioActual = fechaActual.Year;
+
+    var fechaHaceUnMes = fechaActual.AddMonths(-1);
+    var mesAnterior = fechaHaceUnMes.Month;
+    var anioYMesAnterior = fechaHaceUnMes.Year;
+
+    var anioAnterior = anioActual - 1;
 }
 
 <h1>Reporte excel de transacciones</h1>
@@ -13,3 +22,40 @@
 
 <partial name="_Submenu" model="SubmenuTransacciones.Excel"/>
 <br />
+
+<div class="mb-3">
+    <a asp-action="ExportarExcelPorMes" asp-route-mes="@mesActual" asp-route-anio="@anioActual"
+       class="btn btn-success">
+        Exportar mes actual
+    </a>
+    <p class="text-capitalize text-secondary">(@fechaActual.ToString("MMMM yyyy"))</p>
+</div>
+
+<div class="mb-3">
+    <a asp-action="ExportarExcelPorMes" asp-route-mes="@mesAnterior"
+       asp-route-anio="@anioYMesAnterior"
+       class="btn btn-success">
+        Exportar mes anterior
+    </a>
+    <p class="text-capitalize text-secondary">(@fechaHaceUnMes.ToString("MMMM yyyy"))</p>
+</div>
+
+<div class="mb-3">
+    <a asp-action="ExportarExcelPorAnio" asp-route-año="@anioActual" class="btn btn-success">
+        Exportar año actual
+    </a>
+    <p class="text-capitalize text-secondary">(@anioActual)</p>
+</div>
+
+<div class="mb-3">
+    <a asp-action="ExportarExcelPorAño" asp-route-año="@anioAnterior" class="btn btn-success">
+        Exportar año anterior
+    </a>
+    <p class="text-capitalize text-secondary">(@anioAnterior)</p>
+</div>
+
+<div class="mb-3">
+    <a asp-action="ExportarExcelTodo" class="btn btn-success placeholder-wave">
+        Exportar todo
+    </a>
+</div>
