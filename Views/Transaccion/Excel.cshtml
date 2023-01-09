@@ -26,33 +26,33 @@
     <a asp-action="ExportarExcelPorMes" asp-route-mes="@mesActual" asp-route-anio="@anioActual" class="btn btn-success">
         Exportar mes actual
     </a>
-    <p class="text-capitalize text-secondary">(@fechaActual.ToString("MMMM yyyy"))</p>
+    <i class="text-capitalize text-secondary">(@fechaActual.ToString("MMMM yyyy"))</i>
 </div>
 
 <div class="mb-3">
     <a asp-action="ExportarExcelPorMes" asp-route-mes="@mesAnterior" asp-route-anio="@anioYMesAnterior" class="btn btn-success">
         Exportar mes anterior
     </a>
-    <p class="text-capitalize text-secondary">(@fechaHaceUnMes.ToString("MMMM yyyy"))</p>
+    <i class="text-capitalize text-secondary">(@fechaHaceUnMes.ToString("MMMM yyyy"))</i>
 </div>
 
 <div class="mb-3">
     <a asp-action="ExportarExcelPorAnio" asp-route-anio="@anioActual" class="btn btn-success">
         Exportar año actual
     </a>
-    <p class="text-capitalize text-secondary">(@anioActual)</p>
+    <i class="text-capitalize text-secondary">(@anioActual)</i>
 </div>
 
 <div class="mb-3">
     <a asp-action="ExportarExcelPorAnio" asp-route-anio="@anioAnterior" class="btn btn-success">
         Exportar año anterior
     </a>
-    <p class="text-capitalize text-secondary">(@anioAnterior)</p>
+    <i class="text-capitalize text-secondary">(@anioAnterior)</i>
 </div>
 
 <div class="mb-3">
     <a asp-action="ExportarExcelTodo" class="btn btn-success placeholder-wave">
         Exportar todo
     </a>
-    <p class="text-capitalize text-secondary">Historial</p>
+    <i class="text-capitalize text-secondary">(Historial)</i>
 </div>
