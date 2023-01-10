@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
 using ClosedXML.Excel;
 using gestorPresupuestos.Models;
+using gestorPresupuestos.Models.Reportes;
 using gestorPresupuestos.Models.Submenus;
 using gestorPresupuestos.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Data;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace gestorPresupuestos.Controllers
 {
@@ -419,6 +422,29 @@ namespace gestorPresupuestos.Controllers
         public IActionResult Calendario()
         {
             return View();
+        }
+
+        public async Task<JsonResult> ObtenerTransaccionesCalendario(DateTime start, DateTime end)
+        {
+            var usuarioId = iUsuarioRepository.ObtenerUsuarioId();
+
+            var transacciones = await iTransaccionRepository.ObtenerPorUsuarioId(
+                new ParametroGetTransaccionesPorUsuario
+                {
+                    usuarioId = usuarioId,
+                    fechaInicio = start,
+                    fechaFin = end
+                });
+
+            var eventosCalendario = transacciones.Select(transaccion => new CalendarEvent()
+            {
+                Title = $"{transaccion.categoria} (${transaccion.monto.ToString("N")})",
+                Start = transaccion.fechaTransaccion.ToString("yyyy-MM-dd"),
+                End = transaccion.fechaTransaccion.ToString("yyyy-MM-dd"),
+                Color = (transaccion.tipoOperacionId == TipoOperacion.Egreso) ? "Red" : "Green"
+            });
+
+            return Json(eventosCalendario);
         }
     }
 }
