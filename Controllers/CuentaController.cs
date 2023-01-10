@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using gestorPresupuestos.Models;
 using gestorPresupuestos.Servicios;
+using gestorPresupuestos.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -14,7 +15,7 @@ namespace gestorPresupuestos.Controllers
         private readonly ITransaccionRepository iTransaccionRepository;
         private readonly IServicioReporte iServicioReporte;
         private readonly IMapper imapper;
-        private Utils utils;
+        private StringUtils utils;
 
         public CuentaController(
             ITipoCuentaRepository iTipoCuentaRepository,
@@ -30,7 +31,7 @@ namespace gestorPresupuestos.Controllers
             this.iTransaccionRepository = iTransaccionRepository;
             this.iServicioReporte = iServicioReporte;
             this.imapper = imapper;
-            utils = new Utils();
+            utils = new StringUtils();
         }
 
         public ITipoCuentaRepository ITipoCuentaRepository { get; }

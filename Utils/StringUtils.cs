@@ -1,6 +1,6 @@
-﻿namespace gestorPresupuestos.Controllers
+﻿namespace gestorPresupuestos.Utils
 {
-    public class Utils
+    public class StringUtils
     {
         public string capitalizarStr(string str)
         {

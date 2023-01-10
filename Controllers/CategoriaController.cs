@@ -1,5 +1,6 @@
 ﻿using gestorPresupuestos.Models;
 using gestorPresupuestos.Servicios;
+using gestorPresupuestos.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace gestorPresupuestos.Controllers
@@ -8,12 +9,12 @@ namespace gestorPresupuestos.Controllers
     {
         private readonly ICategoriaRepository iCategoriaRepository;
         private readonly IUsuarioRepository iUsuarioRepository;
-        private Utils utils;
+        private StringUtils utils;
         public CategoriaController(ICategoriaRepository iCategoriaRepository, IUsuarioRepository iUsuarioRepository)
         {
             this.iCategoriaRepository = iCategoriaRepository;
             this.iUsuarioRepository = iUsuarioRepository;
-            utils = new Utils();
+            utils = new StringUtils();
         }
 
         [HttpGet]

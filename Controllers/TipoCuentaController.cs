@@ -1,5 +1,6 @@
 ﻿using gestorPresupuestos.Models;
 using gestorPresupuestos.Servicios;
+using gestorPresupuestos.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace gestorPresupuestos.Controllers
@@ -8,12 +9,12 @@ namespace gestorPresupuestos.Controllers
     {
         private ITipoCuentaRepository iTiposCuentasRepository;
         private IUsuarioRepository iUsuarioRepository;
-        private Utils utils;
+        private StringUtils utils;
         public TipoCuentaController(ITipoCuentaRepository tiposCuentasRepository, IUsuarioRepository usuarioRepository)
         {
             this.iTiposCuentasRepository = tiposCuentasRepository;
             this.iUsuarioRepository = usuarioRepository;
-            utils = new Utils();
+            utils = new StringUtils();
         }
         public IActionResult Insertar()
         {
