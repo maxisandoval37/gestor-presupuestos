@@ -1,6 +1,3 @@
-USE [PresupuestosDB]
-GO
-
 INSERT INTO [dbo].[tipo_cuenta]
            ([nombre]
            ,[usuario_id]
