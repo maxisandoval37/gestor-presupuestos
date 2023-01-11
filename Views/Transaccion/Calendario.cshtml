@@ -8,16 +8,75 @@
     <script src="~/lib/fullcalendar/index.global.min.js"></script>
 
     <script>
+        //Inicio script generar calendario
         document.addEventListener('DOMContentLoaded', function () {
             let calendarEl = document.getElementById('calendar');
             let calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: 'es',//para que el calendario este en esp (default eng)
                 dayMaxEventRows: 5,
                 initialView: 'dayGridMonth',
                 businessHours: true,
-                events: '/transaccion/ObtenerTransaccionesCalendario'
+                events: '/transaccion/ObtenerTransaccionesCalendario',
+                dateClick: async function(info){
+                    await llenarModalConTransaccionesPorFecha(info.dateStr);
+                }
             });
             calendar.render();
         });
+        //Fin script generar calendario
+
+
+        async function llenarModalConTransaccionesPorFecha(fecha){//obtenemos la transacciones de la db, y las insertamos en el modal
+            const response = await
+                fetch(`/transaccion/ObtenerTransaccionesPorFecha?fecha=${fecha}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const json = await response.json();
+
+                let ingresos = 0;
+                let egresos = 0;
+                const tipoOperacionesIngresos = 1;
+
+                const formateador = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                });
+
+                const filas = json.map(transaccion => {
+
+                    console.log(transaccion);
+
+                    if (transaccion.tipoOperacionId === tipoOperacionesIngresos){
+                        ingresos += transaccion.monto;
+                    } else{
+                        egresos += transaccion.monto;
+                    }
+
+                    return `<tr>
+                        <td>${transaccion.categoria}</td>
+                        <td>${transaccion.cuenta}</td>
+                        <td align="right" colspan="2"
+                         class=${transaccion.tipoOperacionId === tipoOperacionesIngresos ? 
+                             'Ingreso' : 'Engreso'}>
+                             ${formateador.format(transaccion.monto)}
+                             </td>
+                        </tr>`;
+                });
+
+                $("#modalTitulo").html("Transacciones del día");
+                $("#modalTablaCuerpo").html(filas);
+                $("#modalTablaIngresos").html(formateador.format(ingresos));
+                $("#modalTablaEgresos").html(formateador.format(egresos));
+                $("#modalTablaFecha").html(fecha);
+
+                const modalTransacciones = new bootstrap.Modal(document.getElementById('modalGenerico'));
+
+                modalTransacciones.show();
+        }
     </script>
 }
 
@@ -28,8 +87,9 @@
 </h5>
 
 <br />
-
 <partial name="_Submenu" model="SubmenuTransacciones.Calendario"/>
 <br />
 
 <div id="calendar"></div>
+
+<partial name="_ModalGenerico"/>
